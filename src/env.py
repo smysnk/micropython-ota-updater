@@ -8,6 +8,7 @@ settings = {
 
   # Auto-Updating
   'githubRemote': 'https://github.com/smysnk/my-grow',
+  'githubRemoteBranch': 'master',
   'githubUsername': '', # Optional: Without this, you may hit API limits
   'githubToken': '', # Optional: Without this, you may hit API limits
 }

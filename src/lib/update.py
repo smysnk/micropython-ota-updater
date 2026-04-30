@@ -124,7 +124,10 @@ class GitHub:
     self.logger = logger
 
     if username and token:
-      self.headers = {'Authentication': 'Basic %s' % base64.b64encode(b'%s:%s' % (username, token))}
+      encoded = base64.b64encode(('%s:%s' % (username, token)).encode())
+      if isinstance(encoded, bytes):
+        encoded = encoded.decode()
+      self.headers = {'Authorization': 'Basic %s' % encoded}
     else:
       self.headers = {}
 

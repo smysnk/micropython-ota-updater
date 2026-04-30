@@ -40,8 +40,11 @@ class Response:
     return ujson.loads(self.content)
 
 
-def request(method, url, data=None, json=None, headers={}, stream=None, timeout=5, logger=None):
+def request(method, url, data=None, json=None, headers=None, stream=None, timeout=5, logger=None):
   import usocket
+
+  if headers is None:
+    headers = {}
 
   log = lambda *args, **kargs: args
   if logger:
@@ -74,14 +77,22 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
     s.connect(ai[-1])
     if proto == "https:":
       s = ussl.wrap_socket(s, server_hostname=host)
-    s.write(b"%s /%s HTTP/1.0\r\n" % (method, path))
-    if not "Host" in headers:
-      s.write(b"Host: %s\r\n" % host)
+    request_method = method.encode() if isinstance(method, str) else method
+    request_path = path.encode() if isinstance(path, str) else path
+    host_header = host.encode() if isinstance(host, str) else host
+    s.write(b"%s /%s HTTP/1.0\r\n" % (request_method, request_path))
+    if "Host" not in headers:
+      s.write(b"Host: %s\r\n" % host_header)
     # Iterate over keys to avoid tuple alloc
     for k in headers:
+      value = headers[k]
+      if isinstance(k, str):
+        k = k.encode()
+      if isinstance(value, str):
+        value = value.encode()
       s.write(k)
       s.write(b": ")
-      s.write(headers[k])
+      s.write(value)
       s.write(b"\r\n")
     s.write(b'User-Agent: MicroPython Client\r\n')
     if json is not None:
@@ -89,6 +100,8 @@ def request(method, url, data=None, json=None, headers={}, stream=None, timeout=
       import ujson
       data = ujson.dumps(json)
       s.write(b"Content-Type: application/json\r\n")
+    if isinstance(data, str):
+      data = data.encode()
     if data:
       s.write(b"Content-Length: %d\r\n" % len(data))
     s.write(b"\r\n")

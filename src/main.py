@@ -1,5 +1,5 @@
-import update, env, lib.requests, lib.logger, lib.requests, lib.timew, time, os, machine
-from lib import base64
+import env, lib.requests, lib.logger, lib.timew, time, os, machine
+from lib import base64, update
 
 t = lib.timew.Time(time=time)
 
@@ -14,7 +14,7 @@ io = update.IO(os=os, logger=loggerOta)
 github = update.GitHub(
   io=io,
   remote=env.settings['githubRemote'],
-  branch=env.settings['githubRemoteBranch'],
+  branch=env.settings.get('githubRemoteBranch', 'master'),
   logger=loggerOta,
   requests=lib.requests,
   username=env.settings['githubUsername'],

@@ -46,6 +46,7 @@ def setupGithub(*args, **kargs):
     'io': io,
     'logger': logger,
     'os': os,
+    'base64': base64,
   }
 
 def test_github_sha_shouldReturnSha():
@@ -70,6 +71,23 @@ def test_github_sha_callCorrectApiEndpoint():
       call.get('https://api.github.com/repos/smysnk/ota-test/commits?per_page=1&sha=edf', logger=ANY, headers=ANY)
     ]
   )
+
+def test_github_authHeader_shouldUseAuthorizationBasic():
+  mocks = setupGithub(remote='https://github.com/smysnk/ota-test')
+  mocks['base64'].b64encode.return_value = b'dXNlcjp0b2tlbg=='
+
+  github = lib.update.GitHub(
+    remote='https://github.com/smysnk/ota-test',
+    requests=mocks['requests'],
+    io=mocks['io'],
+    logger=mocks['logger'],
+    base64=mocks['base64'],
+    username='user',
+    token='token',
+  )
+
+  mocks['base64'].b64encode.assert_called_once_with(b'user:token')
+  assert github.headers == {'Authorization': 'Basic dXNlcjp0b2tlbg=='}
 
 def test_github_update_shouldHandleValueError():
   mocks = setupGithub(remote='https://github.com/smysnk/ota-test')

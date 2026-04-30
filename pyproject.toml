@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=80", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "micropython-ota-updater"
+version = "1.0.0"
+description = "MicroPython OTA updater for pulling application files from GitHub."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+  "esptool>=5.2.0,<6",
+  "rshell>=0.0.36,<0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=9.0.3,<10",
+  "pytest-watch>=4.2.0,<5",
+]
+
+[tool.setuptools]
+packages = []
+py-modules = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["test"]

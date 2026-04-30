@@ -1,1 +1,10 @@
 *.bin
+*.py[cod]
+__pycache__/
+.pytest_cache/
+.venv/
+node_modules/
+artifacts/
+build/
+dist/
+*.egg-info/

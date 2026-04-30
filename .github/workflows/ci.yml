@@ -1,0 +1,110 @@
+name: CI/CD
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ci-cd-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test Station
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Capture build start time
+        run: echo "TEST_STATION_BUILD_STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Python dependencies
+        run: make install-python-dev
+
+      - name: Run Test Station
+        id: test_station
+        shell: bash
+        run: |
+          log_path="${RUNNER_TEMP}/test-station.log"
+          set +e
+          npm run test:ci 2>&1 | tee "$log_path"
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          echo "log_path=$log_path" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload Test Station report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-station-report
+          path: artifacts/test-station
+          if-no-files-found: warn
+
+      - name: Derive Test Station CI status
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ steps.test_station.outputs.exit_code }}" = "0" ]; then
+            echo "TEST_STATION_CI_STATUS=passed" >> "$GITHUB_ENV"
+          else
+            echo "TEST_STATION_CI_STATUS=failed" >> "$GITHUB_ENV"
+          fi
+
+      - name: Publish report to Test Station
+        if: always()
+        shell: bash
+        env:
+          TEST_STATION_INGEST_ENDPOINT: ${{ vars.TEST_STATION_INGEST_ENDPOINT != '' && vars.TEST_STATION_INGEST_ENDPOINT || 'https://test-station.smysnk.com/api/ingest' }}
+          TEST_STATION_INGEST_PROJECT_KEY: micropython-ota-updater
+          TEST_STATION_INGEST_SHARED_KEY: ${{ secrets.TEST_STATION_INGEST_SHARED_KEY }}
+          S3_BUCKET: ${{ vars.S3_BUCKET }}
+          S3_STORAGE_PREFIX: ${{ vars.S3_STORAGE_PREFIX }}
+          S3_PUBLIC_URL: ${{ vars.S3_PUBLIC_URL }}
+        run: |
+          if [ -z "$TEST_STATION_INGEST_SHARED_KEY" ]; then
+            echo "Skipping Test Station ingest publish because TEST_STATION_INGEST_SHARED_KEY is not set."
+            exit 0
+          fi
+          export TEST_STATION_BUILD_COMPLETED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          export S3_STORAGE_PREFIX="${S3_STORAGE_PREFIX:-ci/${GITHUB_REPOSITORY}/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}}"
+          npm run ci:publish:test-station -- --input ./artifacts/test-station/report.json
+
+      - name: Fail if Test Station failed
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ steps.test_station.outputs.exit_code }}" = "0" ]; then
+            exit 0
+          fi
+          echo "Test Station failed. Captured log:"
+          if [ -f "${{ steps.test_station.outputs.log_path }}" ]; then
+            cat "${{ steps.test_station.outputs.log_path }}"
+          else
+            echo "No Test Station log file found at ${{ steps.test_station.outputs.log_path }}"
+          fi
+          exit 1
