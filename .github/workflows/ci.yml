@@ -7,6 +7,8 @@ on:
       - master
       - main
   workflow_dispatch:
+  schedule:
+    - cron: "17 8 * * 1"
 
 concurrency:
   group: ci-cd-${{ github.workflow }}-${{ github.ref }}
@@ -44,6 +46,9 @@ jobs:
 
       - name: Install Python dependencies
         run: make install-python-dev
+
+      - name: Compile device modules with MicroPython 1.28
+        run: make test-mpy
 
       - name: Run Test Station
         id: test_station
@@ -108,3 +113,61 @@ jobs:
             echo "No Test Station log file found at ${{ steps.test_station.outputs.log_path }}"
           fi
           exit 1
+
+  preview-compatibility:
+    name: MicroPython preview compatibility
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out updater
+        uses: actions/checkout@v4
+
+      - name: Check out MicroPython development branch
+        uses: actions/checkout@v4
+        with:
+          repository: micropython/micropython
+          path: .micropython-preview
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Build preview mpy-cross
+        run: make -C .micropython-preview/mpy-cross
+
+      - name: Compile against preview bytecode compiler
+        run: python scripts/check_micropython_compat.py --compiler .micropython-preview/mpy-cross/build/mpy-cross
+
+  micropython-unix:
+    name: MicroPython 1.28 Unix runtime
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out updater
+        uses: actions/checkout@v4
+
+      - name: Check out MicroPython 1.28.0
+        uses: actions/checkout@v4
+        with:
+          repository: micropython/micropython
+          ref: v1.28.0
+          path: .micropython-stable
+
+      - name: Fetch Unix port submodules
+        run: make -C .micropython-stable/ports/unix submodules
+
+      - name: Build Unix port
+        run: make -C .micropython-stable/ports/unix MICROPY_PY_FFI=0
+
+      - name: Run portable modules on MicroPython
+        env:
+          MICROPYPATH: src
+        run: .micropython-stable/ports/unix/build-standard/micropython scripts/micropython_unix_smoke.py
+
+      - name: Verify GitHub TLS with MicroPython mbedTLS
+        env:
+          MICROPYPATH: src
+        run: .micropython-stable/ports/unix/build-standard/micropython scripts/check_certificates.py

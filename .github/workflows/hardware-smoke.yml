@@ -1,0 +1,54 @@
+name: ESP32 hardware smoke test
+
+on:
+  workflow_dispatch:
+    inputs:
+      serial_port:
+        description: Serial port attached to the dedicated ESP32 runner
+        required: true
+        default: /dev/ttyUSB0
+
+concurrency:
+  group: micropython-ota-hardware
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  esp32:
+    name: ESP32_GENERIC / MicroPython 1.28.0
+    runs-on: [self-hosted, micropython-esp32]
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install host tooling
+        run: python -m pip install -e ".[dev]"
+
+      - name: Configure device-only credentials
+        env:
+          OTA_WIFI_AP: ${{ secrets.OTA_WIFI_AP }}
+          OTA_WIFI_PASSWORD: ${{ secrets.OTA_WIFI_PASSWORD }}
+          OTA_GITHUB_REMOTE: ${{ vars.OTA_GITHUB_REMOTE }}
+          OTA_GITHUB_BRANCH: ${{ vars.OTA_GITHUB_BRANCH }}
+          OTA_GITHUB_TOKEN: ${{ secrets.OTA_GITHUB_TOKEN }}
+        run: python scripts/configure_env.py --output src/env.py
+
+      - name: Erase, flash, and deploy
+        env:
+          RSHELL_PORT: ${{ inputs.serial_port }}
+          MPREMOTE_PORT: ${{ inputs.serial_port }}
+        run: make erase flash deploy
+
+      - name: Run GitHub TLS and reboot smoke tests
+        env:
+          MPREMOTE_PORT: ${{ inputs.serial_port }}
+        run: make smoke-test

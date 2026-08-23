@@ -1,163 +1,211 @@
-import unittest
-from unittest.mock import MagicMock, call, ANY
-import json
+import os
+from pathlib import Path
+from unittest.mock import MagicMock
 
-import lib.update
-import requests
+import pytest
 
-def setup():
-  machine = MagicMock()
-  io = MagicMock()
-  logger = MagicMock()
-  github = MagicMock()
+from lib.update import GitHub, IO, OTAUpdater
 
-  u = lib.update.OTAUpdater(
-    machine=machine,
+
+class Log:
+  def __call__(self, *args, **kwargs):
+    if kwargs.get('append'):
+      return self
+    return None
+
+  def append(self, name):
+    return self
+
+
+class GitHubFixture:
+  def __init__(self, sha='new-sha', fail=False):
+    self.remote_sha = sha
+    self.fail = fail
+    self.download_base = None
+
+  def sha(self):
+    return self.remote_sha
+
+  def download(self, sha, destination, base):
+    self.download_base = base
+    Path(destination, 'nested').mkdir()
+    Path(destination, 'nested', 'application.py').write_text('VALUE = 2\n')
+    if self.fail:
+      raise OSError('download interrupted')
+
+
+def updater(tmp_path, monkeypatch, github=None, minimum_free_bytes=0):
+  monkeypatch.chdir(tmp_path)
+  log = Log()
+  io = IO(os=os, logger=log)
+  return OTAUpdater(
     io=io,
-    logger=logger,
-    github=github,
+    github=github or GitHubFixture(),
+    logger=log,
+    machine=MagicMock(),
+    minimumFreeBytes=minimum_free_bytes,
   )
 
-  return {
-    'update': u,
-    'machine': machine,
-    'io': io,
-    'logger': logger,
-    'github': github,
-  }
 
-def setupGithub(*args, **kargs):
-  requests = MagicMock(name='requests')
-  os = MagicMock(name='os')
-  logger = MagicMock(name='logger')
-  base64 = MagicMock(name='base64')
-  io = lib.update.IO(os=os, logger=logger)
-  github = lib.update.GitHub(
-    *args, **kargs,
+def write_current(version='old-sha'):
+  Path('src').mkdir()
+  Path('src/.version').write_text(version)
+  Path('src/application.py').write_text('VALUE = 1\n')
+
+
+def test_update_stages_and_swaps_without_deleting_previous(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch)
+  write_current()
+
+  assert ota.update() is True
+  assert Path('src/.version').read_text() == 'new-sha'
+  assert Path('src/nested/application.py').read_text() == 'VALUE = 2\n'
+  assert Path('src.previous/.version').read_text() == 'old-sha'
+  assert Path('.ota-pending').read_text() == 'new-sha'
+
+
+def test_update_can_download_a_different_remote_directory(tmp_path, monkeypatch):
+  github = GitHubFixture()
+  ota = updater(tmp_path, monkeypatch, github=github)
+  ota.remoteDir = 'application'
+  write_current()
+
+  ota.update()
+
+  assert github.download_base == 'application'
+
+
+def test_confirm_removes_pending_marker_and_previous_copy(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch)
+  write_current()
+  ota.update()
+
+  ota.confirm()
+
+  assert not Path('.ota-pending').exists()
+  assert not Path('src.previous').exists()
+  assert Path('src').exists()
+
+
+def test_recover_restores_unconfirmed_application(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch)
+  write_current()
+  ota.update()
+
+  assert ota.recover() is True
+  assert Path('src/.version').read_text() == 'old-sha'
+  assert not Path('.ota-pending').exists()
+  assert not Path('src.previous').exists()
+
+
+def test_recover_restores_previous_when_reset_happens_between_renames(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch)
+  Path('src.previous').mkdir()
+  Path('src.previous/.version').write_text('old-sha')
+  Path('src.next').mkdir()
+  Path('.ota-pending').write_text('new-sha')
+
+  assert ota.recover() is True
+  assert Path('src/.version').read_text() == 'old-sha'
+  assert not Path('src.next').exists()
+
+
+def test_recover_discards_prepared_stage_before_first_rename(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch)
+  write_current()
+  Path('src.next').mkdir()
+  Path('.ota-pending').write_text('new-sha')
+
+  assert ota.recover() is False
+  assert Path('src/.version').read_text() == 'old-sha'
+  assert not Path('src.next').exists()
+  assert not Path('.ota-pending').exists()
+
+
+def test_failed_download_keeps_current_application(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch, github=GitHubFixture(fail=True))
+  write_current()
+
+  with pytest.raises(OSError, match='interrupted'):
+    ota.update()
+
+  assert Path('src/.version').read_text() == 'old-sha'
+  assert not Path('src.next').exists()
+  assert not Path('.ota-pending').exists()
+
+
+def test_update_is_noop_when_versions_match(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch, github=GitHubFixture(sha='same-sha'))
+  write_current('same-sha')
+
+  assert ota.update() is False
+  assert not Path('src.previous').exists()
+
+
+def test_update_checks_available_space(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch, minimum_free_bytes=10**30)
+  write_current()
+
+  with pytest.raises(OSError, match='Not enough free space'):
+    ota.update()
+
+
+def test_io_removes_nested_tree(tmp_path, monkeypatch):
+  monkeypatch.chdir(tmp_path)
+  Path('tree/child').mkdir(parents=True)
+  Path('tree/child/file.bin').write_bytes(b'abc')
+  io = IO(os=os, logger=Log())
+
+  io.rmtree('tree')
+
+  assert not Path('tree').exists()
+
+
+def make_github(token=''):
+  requests = MagicMock()
+  io = MagicMock()
+  io.path.side_effect = lambda *parts: '/'.join(parts).strip('/')
+  github = GitHub(
+    remote='https://github.com/smysnk/ota-test',
+    branch='feature/test',
     requests=requests,
     io=io,
-    logger=logger,
-    base64=base64,
+    logger=Log(),
+    token=token,
+    ca_certs=MagicMock(),
   )
-
-  return {
-    'github': github,
-    'requests': requests,
-    'io': io,
-    'logger': logger,
-    'os': os,
-    'base64': base64,
-  }
-
-def test_github_sha_shouldReturnSha():
-  mocks = setupGithub(remote='https://github.com/smysnk/ota-test')
-  result = MagicMock()
-  result.status_code = 200
-  result.json.return_value = [{'sha': 'bd446083db139931631cfd0a9dddf869c5b776b2'}]
-  mocks['requests'].get.return_value = result
-  
-  assert mocks['github'].sha() == 'bd446083db139931631cfd0a9dddf869c5b776b2'
-
-def test_github_sha_callCorrectApiEndpoint():
-  mocks = setupGithub(remote='https://github.com/smysnk/ota-test', branch='edf')
-  result = MagicMock()
-  result.status_code = 200
-  result.json.return_value = [{'sha': 'bd446083db139931631cfd0a9dddf869c5b776b2'}]
-  mocks['requests'].get.return_value = result
-    
-  mocks['github'].sha()
-  mocks['requests'].get.assert_has_calls(
-    [
-      call.get('https://api.github.com/repos/smysnk/ota-test/commits?per_page=1&sha=edf', logger=ANY, headers=ANY)
-    ]
-  )
-
-def test_github_authHeader_shouldUseAuthorizationBasic():
-  mocks = setupGithub(remote='https://github.com/smysnk/ota-test')
-  mocks['base64'].b64encode.return_value = b'dXNlcjp0b2tlbg=='
-
-  github = lib.update.GitHub(
-    remote='https://github.com/smysnk/ota-test',
-    requests=mocks['requests'],
-    io=mocks['io'],
-    logger=mocks['logger'],
-    base64=mocks['base64'],
-    username='user',
-    token='token',
-  )
-
-  mocks['base64'].b64encode.assert_called_once_with(b'user:token')
-  assert github.headers == {'Authorization': 'Basic dXNlcjp0b2tlbg=='}
-
-def test_github_update_shouldHandleValueError():
-  mocks = setupGithub(remote='https://github.com/smysnk/ota-test')
-  mocks['requests'].get.return_value.json.side_effect = [
-    [
-      {
-        "name":"README.md",
-        "download_url":"https://raw.githubusercontent.com/smysnk/ota-test/01f5e563ee8466b33fe7a9dbef2b9c7348b44e6d/README.md",
-        "type":"file",
-      },
-      {
-        "name":"README2.md",
-        "download_url":"https://raw.githubusercontent.com/smysnk/ota-test/01f5e563ee8466b33fe7a9dbef2b9c7348b44e6d/README2.md",
-        "type":"file",
-      },
-      {
-        "name":"sub",
-        "download_url":"https://raw.githubusercontent.com/smysnk/ota-test/01f5e563ee8466b33fe7a9dbef2b9c7348b44e6d/sub",
-        "type":"dir",
-      }
-    ],
-    [
-      {
-        "name":"README.md",
-        "download_url":"https://raw.githubusercontent.com/smysnk/ota-test/01f5e563ee8466b33fe7a9dbef2b9c7348b44e6d/sub/README.md",
-        "type":"file",
-      },
-    ],
-  ];
-
-  mocks['github'].download(sha='abc', destination='123', base='raw')
-  # print(mocks['io'].downloadFile.assert_called_with('https://raw.githubusercontent.com/smysnk/ota-test/01f5e563ee8466b33fe7a9dbef2b9c7348b44e6d/README.md', '123/README.md'))
-  # print(mocks['requests'].get.mock_calls)
-  print(mocks['os'].mock_calls)
-  mocks['requests'].get.assert_has_calls(
-    [
-      call('https://api.github.com/repos/smysnk/ota-test/contents/raw?ref=abc', logger=ANY, headers=ANY),
-      call().json(),
-      call('https://raw.githubusercontent.com/smysnk/ota-test/01f5e563ee8466b33fe7a9dbef2b9c7348b44e6d/README.md', logger=ANY, headers=ANY),
-      call().save('123/README.md'),
-      call('https://raw.githubusercontent.com/smysnk/ota-test/01f5e563ee8466b33fe7a9dbef2b9c7348b44e6d/README2.md', logger=ANY, headers=ANY),
-      call().save('123/README2.md'),
-      call('https://api.github.com/repos/smysnk/ota-test/contents/raw/sub?ref=abc', logger=ANY, headers=ANY),
-      call().json(),
-      call('https://raw.githubusercontent.com/smysnk/ota-test/01f5e563ee8466b33fe7a9dbef2b9c7348b44e6d/sub/README.md', logger=ANY, headers=ANY),
-      call().save('123/sub/README.md')
-    ]
-  )
+  return github, requests
 
 
-# def test_updater_canGetLatestVersion():
-#   mocks = setup()
-#   # mocks[''].get.return_value.json.return_value = {
-#   #   'tag_name': ''
-#   # }
-#   assert()
-#   mocks['update']
+def test_github_uses_bearer_authentication_and_current_api_headers():
+  github, _ = make_github(token='secret')
+
+  assert github.headers['Authorization'] == 'Bearer secret'
+  assert github.headers['X-GitHub-Api-Version'] == '2022-11-28'
+  assert github.headers['User-Agent'].startswith('micropython-ota-updater/')
 
 
-# def test_updater_canGetLatestVersionabc():
+def test_github_sha_closes_response_and_passes_tls_configuration():
+  github, requests = make_github()
+  response = requests.get.return_value
+  response.status_code = 200
+  response.json.return_value = [{'sha': 'abc123'}]
 
-#   (u, request, io) = setup()
-#   request.get.return_value.json.return_value = [{'sha': 'bd446083db139931631cfd0a9dddf869c5b776b2'}]
-
-#   print(u._check_for_new_version())
-
-#   print(request, io)
-
-
-#   assert False
+  assert github.sha() == 'abc123'
+  response.close.assert_called_once()
+  _, kwargs = requests.get.call_args
+  assert kwargs['verify'] is True
+  assert kwargs['ca_certs'] is github.ca_certs
+  assert kwargs['timeout'] == 10
 
 
-  # response = self.requests.post("https://api.datadoghq.com/api/v1/series", headers=self.headers, json=data, timeout=self.timeout)
+def test_github_reports_http_error_and_closes_response():
+  github, requests = make_github()
+  response = requests.get.return_value
+  response.status_code = 403
+  response.reason = b'rate limited'
+
+  with pytest.raises(OSError, match='HTTP 403 rate limited'):
+    github.sha()
+
+  response.close.assert_called_once()

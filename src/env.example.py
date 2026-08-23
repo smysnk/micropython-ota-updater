@@ -1,0 +1,15 @@
+settings = {
+  'wifiAP': 'YOUR_WIFI_NAME',
+  'wifiPassword': 'YOUR_WIFI_PASSWORD',
+  'controllerName': 'ota-controller',
+  'wifiConnectTimeout': 30,
+  'debug': False,
+  'logInclude': ['.*'],
+  'logExclude': [],
+  'httpTimeout': 10,
+  'githubRemote': 'https://github.com/OWNER/APPLICATION_REPOSITORY',
+  'githubRemoteBranch': 'main',
+  'githubUsername': '',
+  'githubToken': '',
+  'otaMinimumFreeBytes': 65536,
+}

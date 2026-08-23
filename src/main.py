@@ -1,10 +1,15 @@
 import env, lib.requests, lib.logger, lib.timew, time, os, machine
-from lib import base64, update
+from lib import certificates, update
 
 t = lib.timew.Time(time=time)
 
 # Configure Logger
-logger = lib.logger.config(enabled=env.settings['debug'], include=env.settings['logInclude'], exclude=env.settings['logExclude'], time=t)
+logger = lib.logger.config(
+  enabled=env.settings.get('debug', False),
+  include=env.settings.get('logInclude', ['.*']),
+  exclude=env.settings.get('logExclude', []),
+  time=t,
+)
 log = logger(append='boot')
 log("The current time is %s" % t.human())
 
@@ -17,16 +22,28 @@ github = update.GitHub(
   branch=env.settings.get('githubRemoteBranch', 'master'),
   logger=loggerOta,
   requests=lib.requests,
-  username=env.settings['githubUsername'],
-  token=env.settings['githubToken'],
-  base64=base64,
+  username=env.settings.get('githubUsername', ''),
+  token=env.settings.get('githubToken', ''),
+  ca_certs=certificates.for_host,
+  timeout=env.settings.get('httpTimeout', 10),
 )
-updater = update.OTAUpdater(io=io, github=github, logger=loggerOta, machine=machine)
+updater = update.OTAUpdater(
+  io=io,
+  github=github,
+  logger=loggerOta,
+  machine=machine,
+  minimumFreeBytes=env.settings.get('otaMinimumFreeBytes', 65536),
+)
 
 try:
   updater.update()
 except Exception as e:
   log('Failed to OTA update:', e)
 
-import src.main
-src.main.start(env=env, requests=lib.requests, logger=logger, time=t, updater=updater)
+try:
+  import src.main as application_main
+  application_main.start(env=env, requests=lib.requests, logger=logger, time=t, updater=updater)
+except Exception:
+  if updater.rollback():
+    machine.reset()
+  raise

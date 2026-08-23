@@ -1,30 +1,39 @@
 PYTHON ?= python3
-ROOT ?=
-USER ?=
-REMOTE_PATH ?= /home/$(USER)/$(ROOT)
-IP ?=
-PATH_TEST ?= test
 ESP_BOARD ?= ESP32_GENERIC
 MICROPYTHON_VERSION ?= v1.28.0
 MICROPYTHON_RELEASE_DATE ?= 20260406
 ESP_IMAGE ?= $(ESP_BOARD)-$(MICROPYTHON_RELEASE_DATE)-$(MICROPYTHON_VERSION).bin
-ESP_IMAGE_URL ?= https://micropython.org/resources/firmware/$(ESP_IMAGE)
+FIRMWARE_MANIFEST ?= firmware/manifest.json
 ESPTOOL ?= $(PYTHON) -m esptool
-DOWNLOAD ?= curl -fL -o
+MPREMOTE ?= $(PYTHON) -m mpremote
+MPREMOTE_PORT ?= auto
+ENV_FILE ?= src/env.py
 export RSHELL_PORT ?= /dev/ttyUSB0
 
+firmware:
+	$(PYTHON) scripts/firmware.py download --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)" --output "$(ESP_IMAGE)"
+
+verify-firmware:
+	$(PYTHON) scripts/firmware.py verify --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)" --input "$(ESP_IMAGE)"
+
 erase:
-	$(ESPTOOL) --chip esp32 --port $(RSHELL_PORT) erase_flash
+	$(ESPTOOL) --chip esp32 --port "$(RSHELL_PORT)" erase_flash
 
-image:
-	test -f "$(ESP_IMAGE)" || $(DOWNLOAD) "$(ESP_IMAGE)" "$(ESP_IMAGE_URL)"
-	$(ESPTOOL) --chip esp32 --port $(RSHELL_PORT) --baud 460800 write_flash -z 0x1000 "$(ESP_IMAGE)"
+flash: firmware
+	$(ESPTOOL) --chip esp32 --port "$(RSHELL_PORT)" --baud 460800 write_flash 0x1000 "$(ESP_IMAGE)"
 
-rsync: clean
-	rshell rsync src /pyboard
+image: flash
+
+deploy:
+	$(MPREMOTE) connect "$(MPREMOTE_PORT)" fs cp src/boot.py :boot.py + fs cp src/main.py :main.py + fs cp "$(ENV_FILE)" :env.py + fs cp -r src/lib : + soft-reset
+
+rsync: deploy
 
 repl:
-	rshell repl
+	$(MPREMOTE) connect "$(MPREMOTE_PORT)" repl
+
+smoke-test:
+	$(PYTHON) scripts/hardware_smoke.py --port "$(MPREMOTE_PORT)"
 
 clean:
 	find . -type d \( -name __pycache__ -o -name .pytest_cache -o -name "*.egg-info" -o -name build -o -name dist \) -prune -exec rm -rf {} +
@@ -44,10 +53,17 @@ test:
 test-python:
 	$(PYTHON) -m pytest
 
+test-mpy:
+	$(PYTHON) scripts/check_micropython_compat.py
+
+test-live-tls:
+	PYTHONPATH=src $(PYTHON) scripts/check_certificates.py
+
 test-ci:
 	npm run test:ci
+	$(PYTHON) scripts/check_micropython_compat.py
 
 test-dev:
 	ptw --poll
 
-.PHONY: erase image rsync repl clean install install-python-dev install-dev test test-python test-ci test-dev
+.PHONY: firmware verify-firmware erase flash image deploy rsync repl smoke-test clean install install-python-dev install-dev test test-python test-mpy test-live-tls test-ci test-dev

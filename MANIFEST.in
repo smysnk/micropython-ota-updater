@@ -1,3 +1,6 @@
 include Makefile
 recursive-include src *.py
 recursive-include test *.py
+recursive-include firmware *.json
+recursive-include docs *.md
+recursive-include scripts *.py *.mjs
