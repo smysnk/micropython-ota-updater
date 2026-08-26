@@ -10,21 +10,6 @@ the air.
 
 ![MicroPython OTA Updater startup flow](docs/micropython-ota-updater-startup.svg)
 
-## Supported platform
-
-| Board profile | MicroPython | Status |
-| --- | --- | --- |
-| `ESP32_GENERIC` | `v1.28.0` (2026-04-06) | Production |
-| MicroPython development branch | Latest preview | Non-blocking weekly compiler check |
-
-Firmware and board instructions are published on the
-[official ESP32_GENERIC download page](https://micropython.org/download/ESP32_GENERIC/).
-
-The firmware URL and SHA-256 checksum are pinned in
-`firmware/manifest.json`. Other ESP32 variants must be added with their own
-firmware filename, flash address, checksum, and hardware validation before they
-are described as supported.
-
 ## Quick start
 
 This path installs the updater on one `ESP32_GENERIC` board and starts a minimal
@@ -246,3 +231,18 @@ Hardware workflow configuration:
 
 Version 3 migration details, including removed interfaces and the known
 downstream consumer, are in `docs/UPGRADING.md`.
+
+## Supported platform
+
+| Board profile | MicroPython | Status |
+| --- | --- | --- |
+| `ESP32_GENERIC` | `v1.28.0` (2026-04-06) | Production |
+| MicroPython development branch | Latest preview | Non-blocking weekly compiler check |
+
+Firmware and board instructions are published on the
+[official ESP32_GENERIC download page](https://micropython.org/download/ESP32_GENERIC/).
+
+The firmware URL and SHA-256 checksum are pinned in
+`firmware/manifest.json`. Other ESP32 variants must be added with their own
+firmware filename, flash address, checksum, and hardware validation before they
+are described as supported.
