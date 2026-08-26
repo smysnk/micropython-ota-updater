@@ -83,30 +83,8 @@ commit it, and push it to GitHub. Press the board's reset button or enter
 `Ctrl-D` in the REPL. The updater will install the new branch commit and retain
 the previous application until the new version calls `updater.confirm()`.
 
-The sections below cover explicit serial ports, rollout branches, recovery, and
-validation in more detail.
-
-## Flash and deploy
-
-The commands use `esptool` and the officially supported `mpremote` utility.
-
-```sh
-# Destructive: erases firmware and all files on the device.
-make erase SERIAL_PORT=/dev/cu.usbserial-0001
-
-# Downloads the pinned artifact, verifies SHA-256, and flashes it.
-make flash SERIAL_PORT=/dev/cu.usbserial-0001
-
-# Copies the updater and local configuration, then performs a soft reset.
-make deploy SERIAL_PORT=/dev/cu.usbserial-0001
-
-make repl SERIAL_PORT=/dev/cu.usbserial-0001
-make smoke-test SERIAL_PORT=/dev/cu.usbserial-0001
-```
-
-`make firmware` downloads without flashing, while `make verify-firmware`
-rechecks an existing image. Board, artifact, chip, baud, and flash-address
-metadata are read exclusively from `firmware/manifest.json`.
+The sections below cover the application contract, rollout branches, recovery,
+and validation in more detail.
 
 ## Application contract
 
