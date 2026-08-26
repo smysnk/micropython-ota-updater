@@ -83,8 +83,7 @@ commit it, and push it to GitHub. Press the board's reset button or enter
 `Ctrl-D` in the REPL. The updater will install the new branch commit and retain
 the previous application until the new version calls `updater.confirm()`.
 
-The sections below cover the application contract, rollout branches, and
-recovery in more detail.
+The sections below cover the application contract and recovery in more detail.
 
 ## Application contract
 
@@ -119,14 +118,6 @@ application also triggers rollback and reset.
 HTTP, logging, and time are application concerns in version 3. Import the
 standard MicroPython modules the application needs instead of expecting the
 bootstrap to inject wrappers.
-
-## Rollout branches
-
-The updater already treats its configured GitHub branch head as the deployment
-checkpoint. A repository can use `ota-preview` and `ota-stable` branches for
-rollout rings without adding release-selection code to the device. Point test
-devices at `ota-preview`; after validation, fast-forward `ota-stable` to the
-tested commit. Devices store and compare the resolved commit SHA.
 
 ## Update sequence
 

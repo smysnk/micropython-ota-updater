@@ -66,10 +66,6 @@ An application may arm its own watchdog before critical initialization. If the
 watchdog resets the board before `confirm()`, the next boot sees `.ota-pending`
 and restores `src.previous`; no updater watchdog hook is needed.
 
-For rollout rings, configure devices to follow an `ota-preview` or `ota-stable`
-branch. Promote a tested commit by advancing the stable branch instead of
-adding release or semantic-version policy to the device.
-
 ## Validation
 
 Run the local gates:
