@@ -140,7 +140,7 @@ Acceptance evidence:
 
 - Existing tests still pass.
 - New provider-contract tests fail against deliberately malformed fixtures.
-- The Test Station report includes the new provider and redaction cases.
+- The Python test suite includes the new provider and redaction cases.
 - No device source or configuration behavior changes in this phase.
 
 ## Phase 2: Extract and harden the GitHub provider
@@ -363,8 +363,7 @@ Acceptance evidence:
 ## Completion gate
 
 The plan is complete only when the implemented phases have repository tests,
-MicroPython compiler proof, Test Station artifacts, live provider/TLS evidence,
-and named-device evidence appropriate to their scope. A local test pass or a
-successful commit is not hardware or deployment proof. Any phase lacking its
-live or physical evidence remains explicitly provisional in the support
-matrix.
+MicroPython compiler proof, live provider/TLS evidence, and named-device
+evidence appropriate to their scope. A local test pass or a successful commit
+is not hardware or deployment proof. Any phase lacking its live or physical
+evidence remains explicitly provisional in the support matrix.

@@ -21,8 +21,8 @@ Local evidence after implementation:
 - Live verified TLS succeeds for the GitHub API and raw-content hosts.
 - The manifest-selected firmware downloads and verifies against its pinned
   SHA-256 checksum.
-- Test Station reports all 36 tests passing, and every SVG validates as XML and
-  renders successfully.
+- The Python suite reports all 36 tests passing, and every SVG validates as XML
+  and renders successfully.
 
 No physical ESP32 serial device was attached. Erase, flash, deploy, reboot,
 interruption, confirmation, and on-device rollback remain release gates; no
@@ -75,8 +75,6 @@ Baseline commands:
 - Removing firmware checksum verification.
 - Adding new repository providers, release policies, CircuitPython support, or
   other speculative abstractions.
-- Changing the separate Test Station integration; that is outside the scope of
-  items 2-6 and can be evaluated independently.
 
 ## Phase 0: Freeze the compatibility boundary
 

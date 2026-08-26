@@ -6,13 +6,12 @@ Set up a local development environment from the repository root:
 python3 -m venv .venv
 . .venv/bin/activate
 make install-dev
-make test-python
-make test-mpy
+make test
 ```
 
-`make test-python` runs the host-side unit and failure-injection tests.
-`make test-mpy` compiles every device module with MicroPython 1.28 `mpy-cross`.
-`make test` produces the Test Station report in `artifacts/test-station/`.
+`make test` runs the host-side unit and failure-injection tests, then compiles
+every device module with the MicroPython 1.28 `mpy-cross` compiler. The focused
+targets remain available as `make test-python` and `make test-mpy`.
 
 The network-dependent certificate-chain check is separate:
 

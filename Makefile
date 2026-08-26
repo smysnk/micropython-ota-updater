@@ -37,10 +37,8 @@ install-python-dev:
 	$(PYTHON) -m pip install -e ".[dev]"
 
 install-dev: install-python-dev
-	npm install
 
-test:
-	npm run test:station
+test: test-python test-mpy
 
 test-python:
 	$(PYTHON) -m pytest
@@ -51,9 +49,7 @@ test-mpy:
 test-live-tls:
 	PYTHONPATH=device $(PYTHON) scripts/check_certificates.py
 
-test-ci:
-	npm run test:ci
-	$(PYTHON) scripts/check_micropython_compat.py
+test-ci: test
 
 test-dev:
 	ptw --poll

@@ -150,17 +150,16 @@ and the migration notes from the earlier release are in `docs/UPGRADING.md`.
 
 ## Supported platform
 
-| Board profile | MicroPython | Status |
-| --- | --- | --- |
-| `ESP32_GENERIC` | `v1.28.0` (2026-04-06) | Production |
-| MicroPython development branch | Latest preview | Non-blocking weekly compiler check |
+The updater is intended for recent network-capable MicroPython builds with
+verified HTTPS support, a writable filesystem with directory and rename
+operations, and enough storage for the active application, a staged download,
+and a rollback copy. MicroPython 1.23 and newer releases are likely compatible.
 
-Firmware and board instructions are published on the
-[official ESP32_GENERIC download page](https://micropython.org/download/ESP32_GENERIC/).
-
-The firmware URL and SHA-256 checksum are pinned in `manifest.json`. Other ESP32
-variants must be added with their own firmware filename, flash address,
-checksum, and hardware validation before they are described as supported.
+The currently validated baseline is `ESP32_GENERIC` with MicroPython 1.28.0,
+as pinned in `manifest.json`. CI also compiles against MicroPython's development
+branch. Other boards and older releases may work, but should be treated as
+unverified until their TLS, filesystem, memory, and reset behaviour are tested
+on hardware.
 
 Project guides: [Development](docs/DEVELOPMENT.md) ·
 [CI and hardware validation](docs/CI_AND_HARDWARE_VALIDATION.md)

@@ -43,6 +43,6 @@ Use this checklist for every MicroPython stable-version update.
 
 - Update the support matrix and migration notes.
 - Review that examples contain no credentials or device-specific secrets.
-- Inspect the complete diff and generated Test Station report.
+- Inspect the complete diff and the full Python and MicroPython compiler output.
 - Only then create the release commit and tag. Committing, tagging, and pushing
   are deliberately separate operator actions.

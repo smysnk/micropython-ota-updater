@@ -74,8 +74,8 @@
   <text class="root-detail" x="520" y="264">Python host tools and test dependencies</text>
 
   <rect x="682" y="218" width="280" height="62" rx="13" fill="#f1f5f9"/>
-  <text class="root-file" x="822" y="243">package.json + Test Station</text>
-  <text class="root-detail" x="822" y="264">test orchestration and report output</text>
+  <text class="root-file" x="822" y="243">manifest.json + workflows</text>
+  <text class="root-detail" x="822" y="264">firmware metadata and CI gates</text>
 
   <rect x="984" y="218" width="338" height="62" rx="13" fill="#f1f5f9"/>
   <text class="root-file" x="1153" y="243">README · LICENSE · docs/</text>
@@ -162,9 +162,9 @@
   <text class="detail" x="757" y="603">live certificate-chain check</text>
 
   <rect x="1031" y="531" width="290" height="95" rx="14" fill="#eef0ff" stroke="#b5bce9"/>
-  <text class="file" x="1049" y="557">Test Station adapters</text>
-  <text class="detail" x="1049" y="581">pytest report generation</text>
-  <text class="detail" x="1049" y="603">CI report publication</text>
+  <text class="file" x="1049" y="557">pytest + compiler checks</text>
+  <text class="detail" x="1049" y="581">host unit and failure tests</text>
+  <text class="detail" x="1049" y="603">CI and hardware validation</text>
 
   <!-- Verification and operations -->
   <rect class="card" x="715" y="680" width="630" height="175" rx="22" filter="url(#shadow)"/>
@@ -204,5 +204,5 @@
   <text x="977" y="944" fill="#ef9d70" font-size="23" font-weight="800">&#8594;</text>
   <text x="1019" y="944" fill="#dce7f2" font-size="17">tests + CI prove the path</text>
 
-  <text x="700" y="989" text-anchor="middle" fill="#718196" font-size="12">Committed source structure; generated environments, build output, and Test Station artifacts are omitted.</text>
+  <text x="700" y="989" text-anchor="middle" fill="#718196" font-size="12">Committed source structure; generated environments and build output are omitted.</text>
 </svg>
