@@ -20,7 +20,8 @@ application from GitHub.
 ### 1. Create the application repository
 
 For this example, use the preconfigured
-[`micropython-ota-quickstart` repository](https://github.com/smysnk/micropython-ota-quickstart).
+[`micropython-ota-quickstart`](https://github.com/smysnk/micropython-ota-quickstart)
+repository.
 [Create your own public repository from this template](https://github.com/smysnk/micropython-ota-quickstart/generate);
 it already includes the required `src/main.py` and `start(settings, updater)`
 entrypoint.
