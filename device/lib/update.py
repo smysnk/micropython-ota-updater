@@ -2,6 +2,23 @@ def _no_log(*parts):
   return None
 
 
+def _quote_ref(value):
+  """Percent-encode a Git ref for use as one API path component."""
+  encoded = ''
+  for byte in value.encode('utf-8'):
+    character = chr(byte)
+    if (
+      'a' <= character <= 'z'
+      or 'A' <= character <= 'Z'
+      or '0' <= character <= '9'
+      or character in '-._~'
+    ):
+      encoded += character
+    else:
+      encoded += '%%%02X' % byte
+  return encoded
+
+
 class IO:
   DIRECTORY_TYPE = 0x4000
 
@@ -200,6 +217,7 @@ class GitHub:
     remote=None,
     io=None,
     log=None,
+    mode='branch',
     branch='main',
     token='',
     ca_certs=None,
@@ -209,6 +227,7 @@ class GitHub:
     self.remote = remote.rstrip('/').replace('https://github.com', 'https://api.github.com/repos')
     self.io = io
     self.log = log or _no_log
+    self.mode = mode
     self.branch = branch
     self.ca_certs = ca_certs
     self.timeout = timeout
@@ -237,7 +256,7 @@ class GitHub:
       reason = str(reason, 'utf-8')
     raise OSError('GitHub %s failed: HTTP %d %s' % (operation, response.status_code, reason))
 
-  def sha(self):
+  def _branch_sha(self):
     response = self._get('%s/commits?per_page=1&sha=%s' % (self.remote, self.branch))
     try:
       self._require_success(response, 'commit lookup')
@@ -247,6 +266,37 @@ class GitHub:
       return commits[0]['sha']
     finally:
       response.close()
+
+  def _release_sha(self):
+    response = self._get('%s/releases/latest' % self.remote)
+    try:
+      self._require_success(response, 'latest release lookup')
+      release = response.json()
+      tag = release.get('tag_name')
+      if not tag:
+        raise OSError('GitHub latest release did not include a tag_name')
+    finally:
+      response.close()
+
+    self.log('Latest GitHub release:', tag)
+    reference = _quote_ref('tags/%s' % tag)
+    response = self._get('%s/commits/%s' % (self.remote, reference))
+    try:
+      self._require_success(response, 'release tag lookup')
+      commit = response.json()
+      sha = commit.get('sha')
+      if not sha:
+        raise OSError('GitHub release tag %s did not resolve to a commit SHA' % tag)
+      return sha
+    finally:
+      response.close()
+
+  def sha(self):
+    if self.mode == 'branch':
+      return self._branch_sha()
+    if self.mode == 'release':
+      return self._release_sha()
+    raise ValueError('Unsupported GitHub update mode: %s' % self.mode)
 
   def download(self, sha=None, destination=None, currentDir='', base=''):
     url = '%s/contents/%s?ref=%s' % (self.remote, self.io.path(base, currentDir), sha)

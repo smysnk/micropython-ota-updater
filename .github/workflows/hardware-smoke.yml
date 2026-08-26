@@ -38,6 +38,7 @@ jobs:
           OTA_WIFI_AP: ${{ secrets.OTA_WIFI_AP }}
           OTA_WIFI_PASSWORD: ${{ secrets.OTA_WIFI_PASSWORD }}
           OTA_GITHUB_REMOTE: ${{ vars.OTA_GITHUB_REMOTE }}
+          OTA_GITHUB_UPDATE_MODE: ${{ vars.OTA_GITHUB_UPDATE_MODE }}
           OTA_GITHUB_BRANCH: ${{ vars.OTA_GITHUB_BRANCH }}
           OTA_GITHUB_TOKEN: ${{ secrets.OTA_GITHUB_TOKEN }}
         run: python scripts/configure_env.py

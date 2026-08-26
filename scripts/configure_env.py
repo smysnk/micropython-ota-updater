@@ -25,6 +25,7 @@ def main():
     'debug': True,
     'httpTimeout': 15,
     'githubRemote': required('OTA_GITHUB_REMOTE'),
+    'githubUpdateMode': os.environ.get('OTA_GITHUB_UPDATE_MODE') or 'branch',
     'githubRemoteBranch': os.environ.get('OTA_GITHUB_BRANCH') or 'main',
     'githubToken': os.environ.get('OTA_GITHUB_TOKEN', ''),
     'otaMinimumFreeBytes': 65536,

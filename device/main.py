@@ -12,6 +12,7 @@ io = update.IO(os=os, log=log)
 github = update.GitHub(
   io=io,
   remote=env.settings['githubRemote'],
+  mode=env.settings.get('githubUpdateMode', 'branch'),
   branch=env.settings.get('githubRemoteBranch', 'main'),
   log=log,
   requests=lib.requests,

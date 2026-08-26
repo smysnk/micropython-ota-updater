@@ -9,3 +9,4 @@ artifacts/
 build/
 dist/
 *.egg-info/
+plans/

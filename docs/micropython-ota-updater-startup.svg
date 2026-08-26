@@ -160,7 +160,7 @@
 
   <!-- Section 4 nodes -->
   <rect class="node" x="209" y="709" width="117" height="56" rx="5"/><text class="node-text" x="267" y="732"><tspan x="267">Read</tspan><tspan x="267" dy="18">src/.version</tspan></text>
-  <rect class="node" x="363" y="699" width="158" height="75" rx="5"/><text class="node-text" x="442" y="724"><tspan x="442">Fetch GitHub branch</tspan><tspan x="442" dy="18">HEAD SHA over</tspan><tspan x="442" dy="18">verified TLS</tspan></text>
+  <rect class="node" x="363" y="699" width="158" height="75" rx="5"/><text class="node-text" x="442" y="724"><tspan x="442">Resolve GitHub</tspan><tspan x="442" dy="18">target SHA over</tspan><tspan x="442" dy="18">verified TLS</tspan></text>
   <polygon class="decision" points="621,683 687,739 621,795 555,739"/><text class="decision-text" x="621" y="727"><tspan x="621">Local SHA</tspan><tspan x="621" dy="17">equals remote</tspan><tspan x="621" dy="17">SHA?</tspan></text>
   <text class="no" x="695" y="730">No</text><text class="yes" x="631" y="815">Yes</text>
   <polygon class="decision" points="804,683 869,738 804,792 740,738"/><text class="decision-text" x="804" y="728"><tspan x="804">Enough free</tspan><tspan x="804" dy="18">storage?</tspan></text>

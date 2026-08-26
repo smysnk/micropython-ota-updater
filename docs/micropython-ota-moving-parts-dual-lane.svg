@@ -30,7 +30,7 @@
 
   <rect x="218" y="207" width="144" height="132" rx="12" fill="#fff" stroke="#93b7cf"/>
   <text class="card-title" x="290" y="237" text-anchor="middle">env.py + host</text>
-  <text class="body" x="238" y="263"><tspan x="238">remote + branch</tspan><tspan x="238" dy="20">timeouts + limits</tspan><tspan x="238" dy="20">firmware + deploy</tspan></text>
+  <text class="body" x="238" y="263"><tspan x="238">remote + update mode</tspan><tspan x="238" dy="20">timeouts + limits</tspan><tspan x="238" dy="20">firmware + deploy</tspan></text>
   <path class="blue-line" d="M362 273H412"/>
   <rect x="412" y="207" width="176" height="132" rx="12" fill="#e5f5fc" stroke="#1680b8"/>
   <text class="card-title" x="500" y="237" text-anchor="middle">boot.py → main.py</text>
@@ -56,7 +56,7 @@
 
   <rect x="218" y="471" width="144" height="132" rx="12" fill="#26394d"/>
   <text x="290" y="501" text-anchor="middle" fill="#fff" font-size="16" font-weight="700">GitHub</text>
-  <text x="238" y="527" fill="#deedf5" font-size="12"><tspan x="238">branch HEAD SHA</tspan><tspan x="238" dy="20">contents API</tspan><tspan x="238" dy="20">raw files</tspan></text>
+  <text x="238" y="527" fill="#deedf5" font-size="12"><tspan x="238">branch/release SHA</tspan><tspan x="238" dy="20">contents API</tspan><tspan x="238" dy="20">raw files</tspan></text>
   <path class="blue-line" d="M362 537H412"/>
   <rect x="412" y="471" width="176" height="132" rx="12" fill="#e5f5fc" stroke="#1680b8"/>
   <text class="card-title" x="500" y="501" text-anchor="middle">GitHub adapter</text>

@@ -9,7 +9,8 @@ attached board, deploys the updater, verifies GitHub TLS, and tests a reboot.
 ## Hardware workflow configuration
 
 - Secrets: `OTA_WIFI_AP`, `OTA_WIFI_PASSWORD`, optionally `OTA_GITHUB_TOKEN`.
-- Variables: `OTA_GITHUB_REMOTE`, optionally `OTA_GITHUB_BRANCH`.
+- Variables: `OTA_GITHUB_REMOTE`, optionally `OTA_GITHUB_UPDATE_MODE` and
+  `OTA_GITHUB_BRANCH`. The update mode defaults to `branch`.
 
 Version 3 migration details, including removed interfaces and the known
 downstream consumer, are in [UPGRADING.md](UPGRADING.md).

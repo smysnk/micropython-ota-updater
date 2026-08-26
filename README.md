@@ -1,8 +1,9 @@
 # MicroPython OTA Updater
 
-An application-file updater for MicroPython devices. It follows a GitHub
-branch, downloads a changed `src` tree into a staging directory, and swaps it
-into place after the download succeeds.
+An application-file updater for MicroPython devices. It follows a configured
+GitHub branch or the latest published GitHub Release, downloads a changed `src`
+tree into a staging directory, and swaps it into place after the download
+succeeds.
 
 This project updates Python application files. Firmware upgrades are performed
 from a host with `make flash`; it does not rewrite the MicroPython firmware over
@@ -43,14 +44,35 @@ make install
 cp device/env.example.py device/env.local.py
 ```
 
-Change these four values in `device/env.local.py`:
+First set the Wi-Fi credentials and application repository in
+`device/env.local.py`:
 
 ```python
 'wifiAP': 'YOUR_WIFI_NAME',
 'wifiPassword': 'YOUR_WIFI_PASSWORD',
 'githubRemote': 'https://github.com/YOUR_NAME/YOUR_APPLICATION',
+```
+
+Then choose one update mode.
+
+**Track a branch:** install the current commit from the selected branch. This
+is the default and the simplest option while developing.
+
+```python
+'githubUpdateMode': 'branch',
 'githubRemoteBranch': 'main',
 ```
+
+**Track GitHub Releases:** install the commit tagged by the latest published
+non-draft, non-prerelease release.
+
+```python
+'githubUpdateMode': 'release',
+```
+
+Release mode ignores `githubRemoteBranch`. It resolves the release tag to an
+immutable commit SHA and installs `src` from that commit; attached release
+assets are not downloaded.
 
 ### 4. Flash and deploy
 
@@ -81,10 +103,17 @@ ota-controller: heartbeat 2
 
 ### 5. Publish an update
 
-Edit `src/main.py` in the application repository created from the template,
-commit it, and push it to GitHub. Press the board's reset button or enter
-`Ctrl-D` in the REPL. The updater will install the new branch commit and retain
-the previous application until the new version calls `updater.confirm()`.
+In branch mode, edit `src/main.py`, commit it, and push it to the configured
+branch. In release mode, also create a GitHub Release whose tag points to the
+commit you want to deploy.
+
+Press the board's reset button or enter `Ctrl-D` in the REPL. The updater will
+install the selected commit and retain the previous application until the new
+version calls `updater.confirm()`.
+
+If you later change modes in `device/env.local.py`, run `make deploy` before
+resetting the device. Selecting the same commit causes no reinstall; selecting
+a different commit installs it even if it is older.
 
 The sections below cover the application contract and recovery in more detail.
 
@@ -125,7 +154,7 @@ bootstrap to inject wrappers.
 ## Update sequence
 
 1. Recover any interrupted or unconfirmed previous update.
-2. Compare `src/.version` with the current GitHub branch SHA.
+2. Compare `src/.version` with the selected branch or release commit SHA.
 3. Check free filesystem space and download into `src.next`.
 4. Write and read back `src.next/.version`.
 5. Create `.ota-pending`, rename `src` to `src.previous`, and rename

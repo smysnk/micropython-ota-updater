@@ -20,7 +20,7 @@
   <rect x="72" y="136" width="172" height="112" rx="16" fill="#26394d"/><rect x="222" y="136" width="22" height="112" fill="#26394d"/>
   <text class="layer-title" x="158" y="183" text-anchor="middle">1 • Inputs</text><text x="158" y="207" text-anchor="middle" fill="#dcebf5" font-size="12">outside the device</text>
   <rect x="276" y="158" width="238" height="68" rx="11" fill="#eef5fa" stroke="#a8bfd0"/>
-  <text class="card-title" x="395" y="185" text-anchor="middle">GitHub repository</text><text class="body" x="395" y="207" text-anchor="middle">branch SHA • src tree • raw files</text>
+  <text class="card-title" x="395" y="185" text-anchor="middle">GitHub repository</text><text class="body" x="395" y="207" text-anchor="middle">target SHA • src tree • raw files</text>
   <rect x="546" y="158" width="238" height="68" rx="11" fill="#e8f5fc" stroke="#74b8dc"/>
   <text class="card-title" x="665" y="185" text-anchor="middle">env.py</text><text class="body" x="665" y="207" text-anchor="middle">remote • credentials • limits</text>
   <rect x="816" y="158" width="278" height="68" rx="11" fill="#fff3cc" stroke="#dba000"/>

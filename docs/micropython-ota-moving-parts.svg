@@ -71,7 +71,7 @@
   <rect x="24" y="194" width="194" height="18" fill="#26394d"/>
   <text class="white-title" x="121" y="196" text-anchor="middle">GitHub repository</text>
   <text class="card-title" x="46" y="247">Application source</text>
-  <text class="body" x="46" y="272"><tspan x="46">• branch HEAD commit SHA</tspan><tspan x="46" dy="22">• recursive src tree</tspan><tspan x="46" dy="22">• raw file downloads</tspan></text>
+  <text class="body" x="46" y="272"><tspan x="46">• branch or release commit SHA</tspan><tspan x="46" dy="22">• recursive src tree</tspan><tspan x="46" dy="22">• raw file downloads</tspan></text>
   <rect x="45" y="346" width="152" height="36" rx="8" fill="#fff" stroke="#9ab6ce"/>
   <text class="label" x="121" y="369" text-anchor="middle">API + raw content</text>
 
@@ -123,7 +123,7 @@
   <!-- Core moving parts -->
   <rect class="step" x="282" y="382" width="230" height="126" rx="13"/>
   <text class="card-title" x="397" y="415" text-anchor="middle">GitHub adapter</text>
-  <text class="body" x="304" y="442"><tspan x="304">• reads branch HEAD SHA</tspan><tspan x="304" dy="21">• walks the contents API</tspan><tspan x="304" dy="21">• streams each file to disk</tspan></text>
+  <text class="body" x="304" y="442"><tspan x="304">• resolves selected target SHA</tspan><tspan x="304" dy="21">• walks the contents API</tspan><tspan x="304" dy="21">• streams each file to disk</tspan></text>
 
   <rect x="550" y="374" width="306" height="142" rx="15" fill="#07518c" filter="url(#shadow)"/>
   <text class="white-title" x="703" y="409" text-anchor="middle">OTAUpdater</text>
