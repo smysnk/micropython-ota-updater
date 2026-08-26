@@ -8,6 +8,10 @@ This project updates Python application files. Firmware upgrades are performed
 from a host with `make flash`; it does not rewrite the MicroPython firmware over
 the air.
 
+Read the companion article,
+[MicroPython OTA updates with GitHub and ESP32](https://smysnk.com/blog/micropython-ota-updates-github-esp32),
+for the design background and a complete walkthrough.
+
 ## Quick start
 
 This path installs the updater on one `ESP32_GENERIC` board and starts a minimal
