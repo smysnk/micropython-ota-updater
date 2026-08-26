@@ -83,25 +83,8 @@ commit it, and push it to GitHub. Press the board's reset button or enter
 `Ctrl-D` in the REPL. The updater will install the new branch commit and retain
 the previous application until the new version calls `updater.confirm()`.
 
-The sections below cover private repositories, explicit serial ports, rollout
-branches, recovery, and validation in more detail.
-
-## Configure a device
-
-Create the ignored local configuration from the one tracked schema:
-
-```sh
-cp device/env.example.py device/env.local.py
-```
-
-Edit `device/env.local.py`, then deploy it. A fine-grained GitHub token is
-optional for public repositories and should have read-only access to the
-application repository. Tokens are sent with Bearer authentication.
-
-The bundled CA roots validate `api.github.com` and
-`raw.githubusercontent.com`. They intentionally reject unrecognised HTTPS
-hosts. Certificate fingerprints and expiry dates must be reviewed during every
-release; see `docs/RELEASE_CHECKLIST.md`.
+The sections below cover explicit serial ports, rollout branches, recovery, and
+validation in more detail.
 
 ## Flash and deploy
 
