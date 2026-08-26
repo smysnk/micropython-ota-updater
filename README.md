@@ -66,8 +66,8 @@ With one compatible board connected, automatic port detection is usually
 enough:
 
 ```sh
-make erase flash deploy SERIAL_PORT=auto
-make repl SERIAL_PORT=auto
+make erase flash deploy
+make repl
 ```
 
 The REPL should begin printing:
