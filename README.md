@@ -83,28 +83,8 @@ commit it, and push it to GitHub. Press the board's reset button or enter
 `Ctrl-D` in the REPL. The updater will install the new branch commit and retain
 the previous application until the new version calls `updater.confirm()`.
 
-The sections below cover development, private repositories, explicit serial
-ports, rollout branches, recovery, and validation in more detail.
-
-## Development
-
-```sh
-python3 -m venv .venv
-. .venv/bin/activate
-make install-dev
-make test-python
-make test-mpy
-```
-
-`make test-python` runs the host-side unit and failure-injection tests.
-`make test-mpy` compiles every device module with MicroPython 1.28 `mpy-cross`.
-`make test` produces the Test Station report in `artifacts/test-station/`.
-
-The network-dependent certificate-chain check is separate:
-
-```sh
-make test-live-tls
-```
+The sections below cover private repositories, explicit serial ports, rollout
+branches, recovery, and validation in more detail.
 
 ## Configure a device
 
@@ -246,3 +226,5 @@ The firmware URL and SHA-256 checksum are pinned in
 `firmware/manifest.json`. Other ESP32 variants must be added with their own
 firmware filename, flash address, checksum, and hardware validation before they
 are described as supported.
+
+Contributing or changing the updater? See the [development guide](docs/DEVELOPMENT.md).
