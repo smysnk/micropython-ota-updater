@@ -8,8 +8,6 @@ This project updates Python application files. Firmware upgrades are performed
 from a host with `make flash`; it does not rewrite the MicroPython firmware over
 the air.
 
-![MicroPython OTA Updater startup flow](docs/micropython-ota-updater-startup.svg)
-
 ## Quick start
 
 This path installs the updater on one `ESP32_GENERIC` board and starts a minimal
@@ -133,6 +131,8 @@ bootstrap to inject wrappers.
 The updater streams file bodies in 512-byte chunks, closes responses on all
 handled failures, verifies TLS hostnames and certificate chains, and leaves the
 current application untouched if staging fails.
+
+![MicroPython OTA Updater startup flow](docs/micropython-ota-updater-startup.svg)
 
 ## Recovery
 
