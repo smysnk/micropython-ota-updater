@@ -1,6 +1,6 @@
 PYTHON ?= python3
 ESP_BOARD ?= ESP32_GENERIC
-FIRMWARE_MANIFEST ?= firmware/manifest.json
+FIRMWARE_MANIFEST ?= manifest.json
 MPREMOTE ?= $(PYTHON) -m mpremote
 DEVICE_SOURCE ?= device
 ENV_FILE ?= device/env.local.py

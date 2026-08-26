@@ -7,7 +7,7 @@ from scripts import firmware
 
 
 def test_production_firmware_manifest_is_pinned():
-  manifest = json.loads(Path('firmware/manifest.json').read_text())
+  manifest = json.loads(Path('manifest.json').read_text())
   board = manifest['boards']['ESP32_GENERIC']
 
   assert manifest['stable'] == 'v1.28.0'
@@ -32,7 +32,7 @@ def test_pinned_root_certificates_have_reviewed_fingerprints():
 
 
 def test_manifest_generates_complete_esptool_commands():
-  board = firmware.load_board('firmware/manifest.json', 'ESP32_GENERIC')
+  board = firmware.load_board('manifest.json', 'ESP32_GENERIC')
 
   erase = firmware.esptool_command(board, 'erase', port='/dev/ttyUSB0')
   flash = firmware.esptool_command(
@@ -55,7 +55,7 @@ def test_manifest_generates_complete_esptool_commands():
 
 
 def test_auto_port_lets_esptool_discover_the_device():
-  board = firmware.load_board('firmware/manifest.json', 'ESP32_GENERIC')
+  board = firmware.load_board('manifest.json', 'ESP32_GENERIC')
 
   command = firmware.esptool_command(board, 'erase')
 
@@ -63,7 +63,7 @@ def test_auto_port_lets_esptool_discover_the_device():
 
 
 def test_flash_verifies_before_running_esptool(monkeypatch, tmp_path):
-  board = firmware.load_board('firmware/manifest.json', 'ESP32_GENERIC')
+  board = firmware.load_board('manifest.json', 'ESP32_GENERIC')
   artifact = tmp_path / board['filename']
   events = []
   monkeypatch.setattr(firmware, 'download', lambda path, selected: events.append(('download', path)))

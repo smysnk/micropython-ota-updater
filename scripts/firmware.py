@@ -94,7 +94,7 @@ def flash(path, board, port='auto', runner=subprocess.run):
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('command', choices=('download', 'verify', 'erase', 'flash'))
-  parser.add_argument('--manifest', default='firmware/manifest.json')
+  parser.add_argument('--manifest', default='manifest.json')
   parser.add_argument('--board', default='ESP32_GENERIC')
   parser.add_argument('--port', default='auto')
   source = parser.add_mutually_exclusive_group()

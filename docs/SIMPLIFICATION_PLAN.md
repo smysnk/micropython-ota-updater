@@ -238,7 +238,7 @@ Acceptance evidence:
 
 Goal: eliminate duplicated board and firmware settings.
 
-Extend each board entry in `firmware/manifest.json` to include every value
+Extend each board entry in `manifest.json` to include every value
 needed for downloading and flashing:
 
 ```json

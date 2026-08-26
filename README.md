@@ -183,9 +183,8 @@ downstream consumer, are in `docs/UPGRADING.md`.
 Firmware and board instructions are published on the
 [official ESP32_GENERIC download page](https://micropython.org/download/ESP32_GENERIC/).
 
-The firmware URL and SHA-256 checksum are pinned in
-`firmware/manifest.json`. Other ESP32 variants must be added with their own
-firmware filename, flash address, checksum, and hardware validation before they
-are described as supported.
+The firmware URL and SHA-256 checksum are pinned in `manifest.json`. Other ESP32
+variants must be added with their own firmware filename, flash address,
+checksum, and hardware validation before they are described as supported.
 
 Contributing or changing the updater? See the [development guide](docs/DEVELOPMENT.md).

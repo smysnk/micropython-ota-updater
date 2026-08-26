@@ -144,7 +144,7 @@
   <rect x="715" y="350" width="630" height="58" rx="22" fill="url(#host-head)"/>
   <rect x="715" y="385" width="630" height="23" fill="#5367db"/>
   <text class="section-label" x="742" y="376">HOST AUTOMATION</text>
-  <text class="path" x="742" y="399">scripts/ + firmware/</text>
+  <text class="path" x="742" y="399">scripts/ + root manifest</text>
 
   <rect x="739" y="427" width="280" height="92" rx="14" fill="#eef0ff" stroke="#b5bce9"/>
   <text class="file" x="757" y="453">firmware.py + manifest.json</text>
