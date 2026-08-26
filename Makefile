@@ -6,6 +6,21 @@ DEVICE_SOURCE ?= device
 ENV_FILE ?= device/env.local.py
 SERIAL_PORT ?= auto
 
+help:
+	@printf '%s\n' \
+		'Usage: make <target> [SERIAL_PORT=<port>]' \
+		'' \
+		'Device connection:' \
+		'  SERIAL_PORT=auto       Automatically select the connected device (default)' \
+		'  SERIAL_PORT=<port>     Use a specific port, for example /dev/cu.usbserial-0001' \
+		'' \
+		'Common targets:' \
+		'  erase                  Erase firmware and all files from the device' \
+		'  flash                  Download, verify, and flash the pinned firmware' \
+		'  deploy                 Copy the updater and configuration to the device' \
+		'  repl                   Open the MicroPython REPL' \
+		'  smoke-test             Run the hardware smoke test'
+
 firmware:
 	$(PYTHON) scripts/firmware.py download --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)"
 
@@ -54,4 +69,4 @@ test-ci: test
 test-dev:
 	ptw --poll
 
-.PHONY: firmware verify-firmware erase flash deploy repl smoke-test clean install install-python-dev install-dev test test-python test-mpy test-live-tls test-ci test-dev
+.PHONY: help firmware verify-firmware erase flash deploy repl smoke-test clean install install-python-dev install-dev test test-python test-mpy test-live-tls test-ci test-dev
