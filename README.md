@@ -16,10 +16,12 @@ application from GitHub.
 ### 1. Create the application repository
 
 Open the
-[`micropython-ota-quickstart` template](https://github.com/smysnk/micropython-ota-quickstart/generate),
-choose **Create a new repository**, and create a public repository. The template
-already contains the required `src/main.py` and `start(settings, updater)`
-entrypoint.
+[`micropython-ota-quickstart` repository](https://github.com/smysnk/micropython-ota-quickstart).
+To create your application from it, select **Use this template** and then
+**Create a new repository**, or open the
+[template generation page](https://github.com/smysnk/micropython-ota-quickstart/generate)
+directly. Create a public repository. The template already contains the required
+`src/main.py` and `start(settings, updater)` entrypoint.
 
 ### 2. Install the host tools
 
