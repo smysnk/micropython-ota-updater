@@ -164,10 +164,10 @@ jobs:
 
       - name: Run portable modules on MicroPython
         env:
-          MICROPYPATH: src
+          MICROPYPATH: device
         run: .micropython-stable/ports/unix/build-standard/micropython scripts/micropython_unix_smoke.py
 
       - name: Verify GitHub TLS with MicroPython mbedTLS
         env:
-          MICROPYPATH: src
+          MICROPYPATH: device
         run: .micropython-stable/ports/unix/build-standard/micropython scripts/check_certificates.py

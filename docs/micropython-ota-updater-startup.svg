@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1536" viewBox="0 0 1024 1536" role="img" aria-labelledby="svg-title svg-desc">
+  <title id="svg-title">MicroPython OTA Updater Startup</title>
+  <desc id="svg-desc">A six-stage flowchart showing network and clock setup, OTA bootstrap, recovery, update checking, staging and swapping, and application confirmation.</desc>
+  <defs>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0f3d72"/><stop offset="0.5" stop-color="#075b94"/><stop offset="1" stop-color="#0b477e"/>
+    </linearGradient>
+    <linearGradient id="panel-blue" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e8f7ff"/><stop offset="1" stop-color="#d9f3ff"/>
+    </linearGradient>
+    <linearGradient id="panel-aqua" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e8fbf8"/><stop offset="1" stop-color="#d7f5ef"/>
+    </linearGradient>
+    <linearGradient id="panel-lavender" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f1f2ff"/><stop offset="1" stop-color="#e4e5fb"/>
+    </linearGradient>
+    <linearGradient id="panel-yellow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fffbed"/><stop offset="1" stop-color="#fff3c9"/>
+    </linearGradient>
+    <linearGradient id="panel-green" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#effff5"/><stop offset="1" stop-color="#d9f7e4"/>
+    </linearGradient>
+    <linearGradient id="step" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6f4ff"/><stop offset="1" stop-color="#c9e6f8"/>
+    </linearGradient>
+    <linearGradient id="orange-step" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff4bf"/><stop offset="1" stop-color="#ffe6a0"/>
+    </linearGradient>
+    <linearGradient id="green-step" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8f5df"/><stop offset="1" stop-color="#bceac9"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0b3157" flood-opacity="0.22"/>
+    </filter>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#087bb6"/></marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#119b3b"/></marker>
+    <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#ed1231"/></marker>
+    <marker id="arrow-orange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#e79000"/></marker>
+    <marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L12,6 L0,12 Z" fill="#8c9aa8"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; }
+      .panel { stroke-width: 2.5; }
+      .section-number { fill: #075496; }
+      .section-title { fill: #063b73; font-size: 18px; font-weight: 700; }
+      .node { fill: url(#step); stroke: #087bb6; stroke-width: 2; }
+      .node-text { fill: #063b73; font-size: 14px; font-weight: 700; text-anchor: middle; }
+      .decision { fill: #07518c; stroke: #07518c; stroke-width: 2; }
+      .decision-text { fill: #fff; font-size: 14px; font-weight: 700; text-anchor: middle; }
+      .yes { fill: #119b3b; font-size: 15px; font-weight: 700; }
+      .no { fill: #ed1231; font-size: 15px; font-weight: 700; }
+      .line-blue { fill: none; stroke: #087bb6; stroke-width: 4; marker-end: url(#arrow-blue); stroke-linecap: round; stroke-linejoin: round; }
+      .line-green { fill: none; stroke: #119b3b; stroke-width: 5; marker-end: url(#arrow-green); stroke-linecap: round; stroke-linejoin: round; }
+      .line-red { fill: none; stroke: #ed1231; stroke-width: 5; marker-end: url(#arrow-red); stroke-linecap: round; stroke-linejoin: round; }
+      .line-red-return { fill: none; stroke: #ed1231; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .line-orange { fill: none; stroke: #e79000; stroke-width: 4; marker-end: url(#arrow-orange); stroke-linecap: round; stroke-linejoin: round; }
+      .line-gray { fill: none; stroke: #8c9aa8; stroke-width: 4; marker-end: url(#arrow-gray); stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="1024" height="1536" fill="#ffffff"/>
+  <rect x="10" y="13" width="1004" height="59" rx="15" fill="url(#header)" filter="url(#shadow)"/>
+  <text x="0" y="53" transform="translate(508 0) scale(1.055 1)" text-anchor="middle" fill="#fff" font-size="34" font-weight="700">MicroPython OTA Updater Startup</text>
+
+  <rect class="panel" x="10" y="86" width="1004" height="233" rx="14" fill="url(#panel-blue)" stroke="#55c8e9"/>
+  <rect class="panel" x="10" y="333" width="1004" height="96" rx="14" fill="url(#panel-aqua)" stroke="#45d3c2"/>
+  <rect class="panel" x="10" y="446" width="1004" height="212" rx="14" fill="url(#panel-lavender)" stroke="#8ba6ff"/>
+  <rect class="panel" x="10" y="673" width="1004" height="185" rx="14" fill="url(#panel-blue)" stroke="#48cfe8"/>
+  <rect class="panel" x="10" y="875" width="1004" height="267" rx="14" fill="url(#panel-yellow)" stroke="#f3cd38"/>
+  <rect class="panel" x="10" y="1156" width="1004" height="257" rx="14" fill="url(#panel-green)" stroke="#58ce85"/>
+  <rect x="10" y="1435" width="1004" height="74" rx="14" fill="#f8fbff" stroke="#9db5ca" stroke-width="2.5"/>
+
+  <!-- Persistent reset and success loops -->
+  <path class="line-red" d="M696 1386 V1389 Q696 1397 688 1397 H47 Q31 1397 31 1381 V132 Q31 114 49 114 H199"/>
+  <path class="line-red-return" d="M487 1386 V1397"/>
+  <path class="line-green" d="M950 192 C973 192 986 203 986 225 V356 C986 375 977 384 958 384 H840"/>
+  <path class="line-green" d="M610 508 H948 C962 508 969 516 969 530 V775"/>
+  <path class="line-green" d="M804 792 V840 C804 857 813 866 830 866 H884 C895 866 900 872 900 883 V953"/>
+  <path class="line-green" d="M921 1021 V1123 C921 1135 914 1142 902 1142 H548 C535 1142 529 1149 529 1164"/>
+
+  <!-- Section 1 connectors -->
+  <path class="line-blue" d="M292 138 V165"/>
+  <path class="line-blue" d="M363 196 H382"/>
+  <path class="line-blue" d="M500 196 H521"/>
+  <path class="line-green" d="M636 196 C650 196 658 192 672 192"/>
+  <path class="line-blue" d="M791 192 H812"/>
+  <path class="line-red" d="M579 253 V276 C579 287 585 292 597 292 H635"/>
+  <path class="line-red" d="M880 251 V276 C880 287 874 292 862 292 H810"/>
+
+  <!-- Section 2 connectors -->
+  <path class="line-blue" d="M429 384 H467"/>
+  <path class="line-blue" d="M640 384 H676"/>
+  <path class="line-green" d="M758 415 C758 428 758 439 758 445"/>
+
+  <!-- Section 3 connectors -->
+  <path class="line-green" d="M381 508 H467"/>
+  <path class="line-green" d="M310 559 V589"/>
+  <path class="line-green" d="M539 559 V589"/>
+  <path class="line-blue" d="M401 617 H462"/>
+  <path class="line-blue" d="M621 617 H647"/>
+  <path class="line-green" d="M735 645 C735 660 735 672 735 681"/>
+
+  <!-- Section 4 connectors -->
+  <path class="line-blue" d="M326 735 H364"/>
+  <path class="line-blue" d="M521 735 H553"/>
+  <path class="line-red" d="M687 739 C705 739 721 738 740 738"/>
+  <path class="line-red" d="M869 738 H906 C919 738 926 746 926 759 V775"/>
+  <path class="line-green" d="M621 795 V838 C621 851 614 857 601 857 H545 C533 857 527 864 527 876 V883"/>
+
+  <!-- Section 5 connectors -->
+  <path class="line-orange" d="M529 933 V946"/>
+  <path class="line-orange" d="M529 983 V995"/>
+  <path class="line-orange" d="M529 1032 V1045"/>
+  <path class="line-orange" d="M529 1082 V1094"/>
+  <path class="line-red" d="M632 908 H647 C658 908 663 914 663 925 V1093 C663 1104 657 1110 646 1110 H632"/>
+  <path class="line-red" d="M663 984 H680"/>
+  <path class="line-red" d="M835 984 H857"/>
+  <path class="line-gray" d="M936 843 V938 C936 949 931 955 921 955"/>
+
+  <!-- Section 6 connectors -->
+  <path class="line-blue" d="M389 1219 H414"/>
+  <path class="line-green" d="M555 1219 H618"/>
+  <path class="line-green" d="M766 1219 H805 C816 1219 821 1214 821 1204"/>
+  <path class="line-red" d="M485 1275 V1332"/>
+  <path class="line-red" d="M692 1275 V1332"/>
+  <path class="line-green" d="M908 1223 V1235"/>
+  <path class="line-green" d="M908 1296 V1306"/>
+
+  <!-- Section labels -->
+  <g><circle class="section-number" cx="68" cy="187" r="23"/><text x="68" y="196" text-anchor="middle" fill="#fff" font-size="29" font-weight="700">1</text><text class="section-title" x="99" y="182"><tspan x="99">Network</tspan><tspan x="99" dy="21">and clock —</tspan><tspan x="99" dy="21">boot.py</tspan></text></g>
+  <g><circle class="section-number" cx="68" cy="376" r="23"/><text x="68" y="385" text-anchor="middle" fill="#fff" font-size="29" font-weight="700">2</text><text class="section-title" x="99" y="373"><tspan x="99">OTA bootstrap —</tspan><tspan x="99" dy="21">main.py</tspan></text></g>
+  <g><circle class="section-number" cx="68" cy="508" r="23"/><text x="68" y="517" text-anchor="middle" fill="#fff" font-size="29" font-weight="700">3</text><text class="section-title" x="99" y="506"><tspan x="99">Recover</tspan><tspan x="99" dy="21">previous</tspan><tspan x="99" dy="21">OTA state</tspan></text></g>
+  <g><circle class="section-number" cx="68" cy="722" r="23"/><text x="68" y="731" text-anchor="middle" fill="#fff" font-size="29" font-weight="700">4</text><text class="section-title" x="99" y="721"><tspan x="99">Check for</tspan><tspan x="99" dy="21">an update</tspan></text></g>
+  <g><circle class="section-number" cx="68" cy="927" r="23"/><text x="68" y="936" text-anchor="middle" fill="#fff" font-size="29" font-weight="700">5</text><text class="section-title" x="99" y="924"><tspan x="99">Stage and swap</tspan><tspan x="99" dy="21">changed</tspan><tspan x="99" dy="21">application</tspan></text></g>
+  <g><circle class="section-number" cx="68" cy="1204" r="23"/><text x="68" y="1213" text-anchor="middle" fill="#fff" font-size="29" font-weight="700">6</text><text class="section-title" x="99" y="1201"><tspan x="99">Start and confirm</tspan><tspan x="99" dy="21">application</tspan></text></g>
+
+  <!-- Section 1 nodes -->
+  <rect x="200" y="98" width="184" height="40" rx="20" fill="url(#header)"/><text class="decision-text" x="292" y="123">Power on or reset</text>
+  <rect class="node" x="218" y="168" width="145" height="56" rx="5"/><text class="node-text" x="290" y="201">Load device settings</text>
+  <rect class="node" x="382" y="168" width="118" height="56" rx="5"/><text class="node-text" x="441" y="201">Connect Wi-Fi</text>
+  <polygon class="decision" points="579,140 636,196 579,253 522,196"/><text class="decision-text" x="579" y="184"><tspan x="579">Connected</tspan><tspan x="579" dy="17">before</tspan><tspan x="579" dy="17">timeout?</tspan></text>
+  <text class="yes" x="636" y="178">Yes</text><text class="no" x="596" y="263">No</text>
+  <rect class="node" x="672" y="164" width="119" height="56" rx="5"/><text class="node-text" x="731" y="184"><tspan x="731">Synchronize RTC</tspan><tspan x="731" dy="17">using NTP</tspan></text>
+  <polygon class="decision" points="880,133 950,192 880,251 812,192"/><text class="decision-text" x="880" y="184"><tspan x="880">NTP succeeded</tspan><tspan x="880" dy="17">or existing RTC</tspan><tspan x="880" dy="17">is valid?</tspan></text>
+  <text class="yes" x="949" y="178">Yes</text><text class="no" x="827" y="263">No</text>
+  <rect x="635" y="271" width="175" height="42" rx="7" fill="#df0927"/><text x="722" y="297" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Boot stops with error</text>
+
+  <!-- Section 2 nodes -->
+  <rect class="node" x="266" y="353" width="163" height="62" rx="6"/><text class="node-text" x="348" y="378"><tspan x="348">Create simple</tspan><tspan x="348" dy="18">debug log</tspan></text>
+  <rect class="node" x="467" y="353" width="173" height="62" rx="6"/><text class="node-text" x="553" y="378"><tspan x="553">Create IO, GitHub,</tspan><tspan x="553" dy="18">and OTAUpdater</tspan></text>
+  <rect class="node" x="676" y="353" width="164" height="62" rx="6"/><text class="node-text" x="758" y="378"><tspan x="758">Call</tspan><tspan x="758" dy="18">updater.update()</tspan></text>
+
+  <!-- Section 3 nodes -->
+  <polygon class="decision" points="310,458 381,508 310,559 239,508"/><text class="decision-text" x="310" y="502"><tspan x="310">.ota-pending</tspan><tspan x="310" dy="18">exists?</tspan></text>
+  <text class="yes" x="403" y="503">No</text><text class="yes" x="267" y="577">Yes</text>
+  <polygon class="decision" points="539,458 610,508 539,559 468,508"/><text class="decision-text" x="539" y="502"><tspan x="539">src.previous</tspan><tspan x="539" dy="18">exists?</tspan></text>
+  <text class="yes" x="638" y="503">No</text><text class="yes" x="496" y="577">Yes</text>
+  <rect class="node" x="238" y="589" width="163" height="56" rx="5"/><text class="node-text" x="319" y="611"><tspan x="319">Remove stale</tspan><tspan x="319" dy="18">staging state</tspan></text>
+  <rect class="node" x="462" y="589" width="159" height="56" rx="5"/><text class="node-text" x="541" y="611"><tspan x="541">Restore previous</tspan><tspan x="541" dy="18">application</tspan></text>
+  <rect class="node" x="647" y="589" width="176" height="56" rx="5"/><text class="node-text" x="735" y="611"><tspan x="735">Rollback unconfirmed</tspan><tspan x="735" dy="18">update</tspan></text>
+
+  <!-- Section 4 nodes -->
+  <rect class="node" x="209" y="709" width="117" height="56" rx="5"/><text class="node-text" x="267" y="732"><tspan x="267">Read</tspan><tspan x="267" dy="18">src/.version</tspan></text>
+  <rect class="node" x="363" y="699" width="158" height="75" rx="5"/><text class="node-text" x="442" y="724"><tspan x="442">Fetch GitHub branch</tspan><tspan x="442" dy="18">HEAD SHA over</tspan><tspan x="442" dy="18">verified TLS</tspan></text>
+  <polygon class="decision" points="621,683 687,739 621,795 555,739"/><text class="decision-text" x="621" y="727"><tspan x="621">Local SHA</tspan><tspan x="621" dy="17">equals remote</tspan><tspan x="621" dy="17">SHA?</tspan></text>
+  <text class="no" x="695" y="730">No</text><text class="yes" x="631" y="815">Yes</text>
+  <polygon class="decision" points="804,683 869,738 804,792 740,738"/><text class="decision-text" x="804" y="728"><tspan x="804">Enough free</tspan><tspan x="804" dy="18">storage?</tspan></text>
+  <text class="no" x="882" y="730">No</text><text class="yes" x="814" y="815">Yes</text>
+  <rect x="875" y="775" width="122" height="68" rx="7" fill="#edf1f4" stroke="#637488" stroke-width="2"/><text class="node-text" x="936" y="797"><tspan x="936">Log failure and</tspan><tspan x="936" dy="17">continue with</tspan><tspan x="936" dy="17">current app</tspan></text>
+
+  <!-- Section 5 nodes -->
+  <rect x="427" y="883" width="205" height="50" rx="7" fill="url(#orange-step)" stroke="#e79000" stroke-width="2"/><text class="node-text" x="529" y="903"><tspan x="529">Download remote src</tspan><tspan x="529" dy="17">into src.next</tspan></text>
+  <rect x="427" y="946" width="205" height="37" rx="6" fill="url(#orange-step)" stroke="#e79000" stroke-width="2"/><text class="node-text" x="529" y="970">Verify src.next/.version</text>
+  <rect x="427" y="995" width="205" height="37" rx="6" fill="url(#orange-step)" stroke="#e79000" stroke-width="2"/><text class="node-text" x="529" y="1019">Write .ota-pending</text>
+  <rect x="427" y="1045" width="205" height="37" rx="6" fill="url(#orange-step)" stroke="#e79000" stroke-width="2"/><text class="node-text" x="529" y="1069">Rename src to src.previous</text>
+  <rect x="427" y="1094" width="205" height="37" rx="6" fill="url(#orange-step)" stroke="#e79000" stroke-width="2"/><text class="node-text" x="529" y="1118">Rename src.next to src</text>
+  <rect x="680" y="955" width="155" height="59" rx="7" fill="#df0927"/><text x="758" y="978" text-anchor="middle" fill="#fff" font-size="14" font-weight="700"><tspan x="758">OTA failure: restore</tspan><tspan x="758" dy="18">and clean staging</tspan></text>
+  <rect x="857" y="955" width="128" height="66" rx="7" fill="#edf1f4" stroke="#637488" stroke-width="2"/><text class="node-text" x="921" y="977"><tspan x="921">Log failure and</tspan><tspan x="921" dy="17">continue with</tspan><tspan x="921" dy="17">current app</tspan></text>
+
+  <!-- Section 6 nodes -->
+  <rect class="node" x="251" y="1191" width="138" height="56" rx="5"/><text class="node-text" x="320" y="1213"><tspan x="320">Import src.main</tspan><tspan x="320" dy="18">start(settings, updater)</tspan></text>
+  <polygon class="decision" points="485,1164 555,1219 485,1275 414,1219"/><text class="decision-text" x="485" y="1207"><tspan x="485">Application</tspan><tspan x="485" dy="17">starts</tspan><tspan x="485" dy="17">successfully?</tspan></text>
+  <text class="yes" x="565" y="1209">Yes</text><text class="no" x="495" y="1301">No</text>
+  <polygon class="decision" points="692,1164 766,1219 692,1275 618,1219"/><text class="decision-text" x="692" y="1207"><tspan x="692">Application</tspan><tspan x="692" dy="17">reaches healthy</tspan><tspan x="692" dy="17">checkpoint?</tspan></text>
+  <text class="yes" x="770" y="1209">Yes</text><text class="no" x="702" y="1301">No</text>
+  <rect x="821" y="1174" width="174" height="49" rx="7" fill="url(#green-step)" stroke="#07933a" stroke-width="2"/><text x="908" y="1205" text-anchor="middle" fill="#064b24" font-size="14" font-weight="700">Call updater.confirm()</text>
+  <rect x="821" y="1235" width="174" height="61" rx="7" fill="url(#green-step)" stroke="#07933a" stroke-width="2"/><text x="908" y="1259" text-anchor="middle" fill="#064b24" font-size="14" font-weight="700"><tspan x="908">Remove .ota-pending</tspan><tspan x="908" dy="18">and src.previous</tspan></text>
+  <rect x="821" y="1306" width="174" height="60" rx="7" fill="#07933a"/><text x="908" y="1331" text-anchor="middle" fill="#fff" font-size="14" font-weight="700"><tspan x="908">Run confirmed</tspan><tspan x="908" dy="18">application</tspan></text>
+  <rect x="408" y="1332" width="159" height="54" rx="8" fill="#df0927"/><text x="487" y="1355" text-anchor="middle" fill="#fff" font-size="14" font-weight="700"><tspan x="487">Startup failed:</tspan><tspan x="487" dy="18">rollback and reset</tspan></text>
+  <rect x="611" y="1332" width="169" height="54" rx="8" fill="#df0927"/><text x="696" y="1355" text-anchor="middle" fill="#fff" font-size="14" font-weight="700"><tspan x="696">Reset or crash</tspan><tspan x="696" dy="18">before confirmation</tspan></text>
+
+  <!-- Legend -->
+  <rect x="26" y="1458" width="38" height="26" rx="12" fill="url(#header)"/><text x="72" y="1476" fill="#063b73" font-size="12" font-weight="700">Process / start</text>
+  <rect x="166" y="1450" width="53" height="42" rx="4" fill="url(#step)" stroke="#087bb6" stroke-width="2"/><text x="228" y="1476" fill="#063b73" font-size="12" font-weight="700">Step</text>
+  <polygon points="300,1448 326,1471 300,1494 274,1471" fill="#07518c"/><text x="336" y="1476" fill="#063b73" font-size="12" font-weight="700">Decision</text>
+  <path d="M401 1474 H431" stroke="#119b3b" stroke-width="4" marker-end="url(#arrow-green)"/><text x="442" y="1479" fill="#063b73" font-size="12" font-weight="700">Yes / success</text>
+  <path d="M545 1474 H575" stroke="#ed1231" stroke-width="4" marker-end="url(#arrow-red)"/><text x="588" y="1479" fill="#063b73" font-size="12" font-weight="700">No / error</text>
+  <path d="M672 1474 H702" stroke="#e79000" stroke-width="4" marker-end="url(#arrow-orange)"/><text x="716" y="1479" fill="#063b73" font-size="12" font-weight="700">Provisional update</text>
+  <path d="M834 1474 H864" stroke="#8c9aa8" stroke-width="4" marker-end="url(#arrow-gray)"/><text x="878" y="1479" fill="#063b73" font-size="12" font-weight="700">Continue current app</text>
+</svg>

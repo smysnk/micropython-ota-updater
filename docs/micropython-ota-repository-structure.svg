@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000" role="img" aria-labelledby="title description">
+  <title id="title">MicroPython OTA Updater repository structure</title>
+  <desc id="description">A repository map showing root orchestration, the device runtime under src, host automation under scripts and firmware, and validation through tests, workflows, and documentation.</desc>
+
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbfe"/>
+      <stop offset="1" stop-color="#edf3f8"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#233fba"/>
+      <stop offset="0.52" stop-color="#176a9b"/>
+      <stop offset="1" stop-color="#087f72"/>
+    </linearGradient>
+    <linearGradient id="device-head" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#087f72"/>
+      <stop offset="1" stop-color="#12a08f"/>
+    </linearGradient>
+    <linearGradient id="host-head" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#435ad8"/>
+      <stop offset="1" stop-color="#6f79e7"/>
+    </linearGradient>
+    <linearGradient id="proof-head" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#b3542d"/>
+      <stop offset="1" stop-color="#d57945"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="9" flood-color="#142235" flood-opacity="0.13"/>
+    </filter>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5 0 10Z" fill="#435ad8"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5 0 10Z" fill="#087f72"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+      .card { fill: #ffffff; stroke: #cad6e3; stroke-width: 2; }
+      .path { fill: #ffffff; font-size: 22px; font-weight: 800; }
+      .section-label { fill: #ffffff; font-size: 13px; font-weight: 800; letter-spacing: 1.3px; }
+      .file { fill: #203247; font-size: 17px; font-weight: 750; }
+      .detail { fill: #66788b; font-size: 14px; }
+      .tiny { fill: #66788b; font-size: 12px; }
+      .root-file { fill: #26394f; font-size: 15px; font-weight: 750; text-anchor: middle; }
+      .root-detail { fill: #708196; font-size: 12px; text-anchor: middle; }
+      .connector { fill: none; stroke: #435ad8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .connector-green { fill: none; stroke: #087f72; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-green); }
+      .flow-label { fill: #435ad8; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-anchor: middle; }
+      .flow-label-green { fill: #087f72; font-size: 12px; font-weight: 800; letter-spacing: .5px; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="1000" rx="28" fill="url(#page)"/>
+
+  <!-- Header -->
+  <rect x="35" y="30" width="1330" height="110" rx="23" fill="url(#hero)" filter="url(#shadow)"/>
+  <text x="72" y="80" fill="#ffffff" font-size="34" font-weight="850">MicroPython OTA Updater</text>
+  <text x="72" y="116" fill="#dceeff" font-size="21">Repository structure and ownership map</text>
+  <text x="1325" y="78" text-anchor="end" fill="#ffffff" font-size="15" font-weight="750">ESP32_GENERIC</text>
+  <text x="1325" y="105" text-anchor="end" fill="#dceeff" font-size="14">MicroPython 1.28.0</text>
+
+  <!-- Root orchestration -->
+  <rect class="card" x="55" y="165" width="1290" height="135" rx="20" filter="url(#shadow)"/>
+  <rect x="55" y="165" width="1290" height="36" rx="20" fill="#203247"/>
+  <rect x="55" y="185" width="1290" height="16" fill="#203247"/>
+  <text class="section-label" x="80" y="189">ROOT / ENTRY POINTS</text>
+
+  <rect x="78" y="218" width="280" height="62" rx="13" fill="#f1f5f9"/>
+  <text class="root-file" x="218" y="243">Makefile</text>
+  <text class="root-detail" x="218" y="264">flash · deploy · test · smoke</text>
+
+  <rect x="380" y="218" width="280" height="62" rx="13" fill="#f1f5f9"/>
+  <text class="root-file" x="520" y="243">pyproject.toml</text>
+  <text class="root-detail" x="520" y="264">Python host tools and test dependencies</text>
+
+  <rect x="682" y="218" width="280" height="62" rx="13" fill="#f1f5f9"/>
+  <text class="root-file" x="822" y="243">package.json + Test Station</text>
+  <text class="root-detail" x="822" y="264">test orchestration and report output</text>
+
+  <rect x="984" y="218" width="338" height="62" rx="13" fill="#f1f5f9"/>
+  <text class="root-file" x="1153" y="243">README · LICENSE · docs/</text>
+  <text class="root-detail" x="1153" y="264">usage, licensing, and migration guidance</text>
+
+  <!-- Root connectors -->
+  <path class="connector-green" d="M350 300V327H352V348"/>
+  <text class="flow-label-green" x="352" y="326">DEPLOYED TO DEVICE</text>
+  <path class="connector" d="M650 300V320H1030V348"/>
+  <text class="flow-label" x="900" y="316">DRIVES HOST COMMANDS</text>
+
+  <!-- Device runtime -->
+  <rect class="card" x="55" y="350" width="630" height="505" rx="22" filter="url(#shadow)"/>
+  <rect x="55" y="350" width="630" height="58" rx="22" fill="url(#device-head)"/>
+  <rect x="55" y="385" width="630" height="23" fill="#0c8c7e"/>
+  <text class="section-label" x="82" y="376">DEVICE RUNTIME</text>
+  <text class="path" x="82" y="399">device/</text>
+  <text x="651" y="383" text-anchor="end" fill="#dcfff8" font-size="13">copied to the ESP32 filesystem</text>
+
+  <rect x="78" y="427" width="255" height="82" rx="14" fill="#e8f7f4" stroke="#9bd7ce"/>
+  <text class="file" x="96" y="454">boot.py</text>
+  <text class="detail" x="96" y="478">Wi-Fi connection</text>
+  <text class="detail" x="96" y="498">RTC / NTP readiness</text>
+
+  <rect x="78" y="520" width="255" height="103" rx="14" fill="#e8f7f4" stroke="#9bd7ce"/>
+  <text class="file" x="96" y="547">main.py</text>
+  <text class="detail" x="96" y="571">Wires IO + GitHub + updater</text>
+  <text class="detail" x="96" y="593">Starts application</text>
+  <text class="detail" x="96" y="613">Rolls back failed startup</text>
+
+  <rect x="78" y="634" width="255" height="82" rx="14" fill="#e8f7f4" stroke="#9bd7ce"/>
+  <text class="file" x="96" y="661">env.example.py</text>
+  <text class="detail" x="96" y="685">one tracked settings schema</text>
+  <text class="detail" x="96" y="705">ignored env.local.py at deploy time</text>
+
+  <rect x="78" y="727" width="255" height="102" rx="14" fill="#f3fbf9" stroke="#9bd7ce"/>
+  <text class="file" x="96" y="754">Application boundary</text>
+  <text class="detail" x="96" y="779">remote src/main.py</text>
+  <text class="detail" x="96" y="801">start(settings, updater)</text>
+  <text class="detail" x="96" y="821">updater.confirm()</text>
+
+  <rect x="352" y="427" width="309" height="402" rx="17" fill="#f6fafc" stroke="#9eb0c3" stroke-width="2"/>
+  <rect x="352" y="427" width="309" height="47" rx="17" fill="#203247"/>
+  <rect x="352" y="454" width="309" height="20" fill="#203247"/>
+  <text class="path" x="374" y="459">device/lib/</text>
+
+  <rect x="372" y="493" width="269" height="84" rx="12" fill="#e9eefc"/>
+  <text class="file" x="390" y="519">update.py</text>
+  <text class="detail" x="390" y="543">IO · GitHub · OTAUpdater</text>
+  <text class="detail" x="390" y="563">stage / swap / confirm / rollback</text>
+
+  <rect x="372" y="588" width="269" height="92" rx="12" fill="#e9eefc"/>
+  <text class="file" x="390" y="614">requests.py</text>
+  <text class="detail" x="390" y="638">GET-only verified HTTPS</text>
+  <text class="detail" x="390" y="658">streaming + bounded redirects</text>
+
+  <rect x="372" y="691" width="269" height="66" rx="12" fill="#e9eefc"/>
+  <text class="file" x="390" y="717">certificates.py</text>
+  <text class="detail" x="390" y="741">pinned GitHub TLS trust roots</text>
+
+  <rect x="372" y="768" width="269" height="43" rx="12" fill="#e9eefc"/>
+  <text class="detail" x="390" y="795">simple log callable · no wrappers</text>
+
+  <!-- Host tooling -->
+  <rect class="card" x="715" y="350" width="630" height="300" rx="22" filter="url(#shadow)"/>
+  <rect x="715" y="350" width="630" height="58" rx="22" fill="url(#host-head)"/>
+  <rect x="715" y="385" width="630" height="23" fill="#5367db"/>
+  <text class="section-label" x="742" y="376">HOST AUTOMATION</text>
+  <text class="path" x="742" y="399">scripts/ + firmware/</text>
+
+  <rect x="739" y="427" width="280" height="92" rx="14" fill="#eef0ff" stroke="#b5bce9"/>
+  <text class="file" x="757" y="453">firmware.py + manifest.json</text>
+  <text class="detail" x="757" y="477">manifest-driven download + flash</text>
+  <text class="detail" x="757" y="499">verify SHA-256 before esptool</text>
+
+  <rect x="1031" y="427" width="290" height="92" rx="14" fill="#eef0ff" stroke="#b5bce9"/>
+  <text class="file" x="1049" y="453">configure_env.py + smoke</text>
+  <text class="detail" x="1049" y="477">build device-only settings</text>
+  <text class="detail" x="1049" y="499">exercise flash / reboot / TLS</text>
+
+  <rect x="739" y="531" width="280" height="95" rx="14" fill="#eef0ff" stroke="#b5bce9"/>
+  <text class="file" x="757" y="557">compatibility checks</text>
+  <text class="detail" x="757" y="581">mpy-cross · Unix runtime</text>
+  <text class="detail" x="757" y="603">live certificate-chain check</text>
+
+  <rect x="1031" y="531" width="290" height="95" rx="14" fill="#eef0ff" stroke="#b5bce9"/>
+  <text class="file" x="1049" y="557">Test Station adapters</text>
+  <text class="detail" x="1049" y="581">pytest report generation</text>
+  <text class="detail" x="1049" y="603">CI report publication</text>
+
+  <!-- Verification and operations -->
+  <rect class="card" x="715" y="680" width="630" height="175" rx="22" filter="url(#shadow)"/>
+  <rect x="715" y="680" width="630" height="55" rx="22" fill="url(#proof-head)"/>
+  <rect x="715" y="713" width="630" height="22" fill="#c9673c"/>
+  <text class="section-label" x="742" y="706">VERIFICATION + OPERATIONS</text>
+
+  <rect x="738" y="752" width="185" height="80" rx="13" fill="#fff3ec" stroke="#e8b69d"/>
+  <text class="file" x="756" y="779">test/</text>
+  <text class="detail" x="756" y="803">unit + failure injection</text>
+  <text class="tiny" x="756" y="821">update · requests · firmware</text>
+
+  <rect x="937" y="752" width="214" height="80" rx="13" fill="#fff3ec" stroke="#e8b69d"/>
+  <text class="file" x="955" y="779">.github/workflows/</text>
+  <text class="detail" x="955" y="803">stable · preview · Unix</text>
+  <text class="tiny" x="955" y="821">self-hosted ESP32 smoke</text>
+
+  <rect x="1165" y="752" width="156" height="80" rx="13" fill="#fff3ec" stroke="#e8b69d"/>
+  <text class="file" x="1183" y="779">docs/</text>
+  <text class="detail" x="1183" y="803">upgrading</text>
+  <text class="tiny" x="1183" y="821">release checklist</text>
+
+  <!-- Cross-zone relationship -->
+  <path class="connector" d="M1030 650V665H995V678"/>
+  <text class="flow-label" x="1120" y="670">AUTOMATED BY CI</text>
+  <path class="connector-green" d="M715 782H697V610H687"/>
+  <text class="flow-label-green" x="699" y="702" transform="rotate(-90 699 702)">EXERCISES DEVICE CODE</text>
+
+  <!-- Bottom lifecycle -->
+  <rect x="55" y="885" width="1290" height="80" rx="18" fill="#203247"/>
+  <text x="80" y="916" fill="#ffffff" font-size="14" font-weight="800" letter-spacing="1">HOW THE REPOSITORY MOVES</text>
+  <text x="80" y="944" fill="#dce7f2" font-size="17">Make targets coordinate host scripts</text>
+  <text x="400" y="944" fill="#7f96ff" font-size="23" font-weight="800">&#8594;</text>
+  <text x="442" y="944" fill="#dce7f2" font-size="17">firmware is verified and flashed</text>
+  <text x="743" y="944" fill="#54d9c4" font-size="23" font-weight="800">&#8594;</text>
+  <text x="785" y="944" fill="#dce7f2" font-size="17">device/ runs on-device</text>
+  <text x="977" y="944" fill="#ef9d70" font-size="23" font-weight="800">&#8594;</text>
+  <text x="1019" y="944" fill="#dce7f2" font-size="17">tests + CI prove the path</text>
+
+  <text x="700" y="989" text-anchor="middle" fill="#718196" font-size="12">Committed source structure; generated environments, build output, and Test Station artifacts are omitted.</text>
+</svg>

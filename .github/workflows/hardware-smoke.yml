@@ -40,15 +40,15 @@ jobs:
           OTA_GITHUB_REMOTE: ${{ vars.OTA_GITHUB_REMOTE }}
           OTA_GITHUB_BRANCH: ${{ vars.OTA_GITHUB_BRANCH }}
           OTA_GITHUB_TOKEN: ${{ secrets.OTA_GITHUB_TOKEN }}
-        run: python scripts/configure_env.py --output src/env.py
+        run: python scripts/configure_env.py
 
       - name: Erase, flash, and deploy
         env:
-          RSHELL_PORT: ${{ inputs.serial_port }}
-          MPREMOTE_PORT: ${{ inputs.serial_port }}
+          SERIAL_PORT: ${{ inputs.serial_port }}
+          ENV_FILE: build/device-env.py
         run: make erase flash deploy
 
       - name: Run GitHub TLS and reboot smoke tests
         env:
-          MPREMOTE_PORT: ${{ inputs.serial_port }}
+          SERIAL_PORT: ${{ inputs.serial_port }}
         run: make smoke-test

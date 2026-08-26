@@ -3,7 +3,7 @@
 __pycache__/
 .pytest_cache/
 .venv/
-src/env.local.py
+device/env.local.py
 node_modules/
 artifacts/
 build/

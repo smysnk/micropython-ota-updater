@@ -18,7 +18,7 @@ def main():
     adjacent = Path(sys.executable).parent / 'mpy-cross'
     compiler = str(adjacent) if adjacent.exists() else 'mpy-cross'
   requested_sources = args.source or [
-    'src',
+    'device',
     'scripts/device_smoke.py',
     'scripts/micropython_unix_smoke.py',
   ]

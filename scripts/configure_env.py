@@ -15,7 +15,7 @@ def required(name):
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('--output', default='src/env.py')
+  parser.add_argument('--output', default='build/device-env.py')
   args = parser.parse_args()
   settings = {
     'wifiAP': required('OTA_WIFI_AP'),
@@ -23,16 +23,15 @@ def main():
     'controllerName': os.environ.get('OTA_CONTROLLER_NAME', 'ota-smoke-test'),
     'wifiConnectTimeout': 30,
     'debug': True,
-    'logInclude': ['.*'],
-    'logExclude': [],
     'httpTimeout': 15,
     'githubRemote': required('OTA_GITHUB_REMOTE'),
     'githubRemoteBranch': os.environ.get('OTA_GITHUB_BRANCH') or 'main',
-    'githubUsername': '',
     'githubToken': os.environ.get('OTA_GITHUB_TOKEN', ''),
     'otaMinimumFreeBytes': 65536,
   }
-  Path(args.output).write_text('settings = %r\n' % settings, encoding='utf-8')
+  output = Path(args.output)
+  output.parent.mkdir(parents=True, exist_ok=True)
+  output.write_text('settings = %r\n' % settings, encoding='utf-8')
 
 
 if __name__ == '__main__':

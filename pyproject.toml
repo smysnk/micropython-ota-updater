@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "micropython-ota-updater"
-version = "2.0.0"
+version = "3.0.0"
 description = "MicroPython OTA updater for pulling application files from GitHub."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -26,5 +26,5 @@ packages = []
 py-modules = []
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["device", "."]
 testpaths = ["test"]

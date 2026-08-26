@@ -6,6 +6,8 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import subprocess
+import sys
 from urllib.request import urlopen
 
 
@@ -55,20 +57,60 @@ def download(path, board):
       temporary.unlink()
 
 
+def artifact_path(board, override=None):
+  return Path(override or board['filename'])
+
+
+def esptool_command(board, operation, port='auto', path=None):
+  command = [sys.executable, '-m', 'esptool', '--chip', board['chip']]
+  if port != 'auto':
+    command.extend(('--port', port))
+  if operation == 'erase':
+    command.append('erase-flash')
+    return command
+  if operation == 'flash':
+    command.extend((
+      '--baud',
+      str(board['baud']),
+      'write-flash',
+      board['flash_address'],
+      str(path),
+    ))
+    return command
+  raise ValueError('Unsupported esptool operation %s' % operation)
+
+
+def run_esptool(command, runner=subprocess.run):
+  print('+', ' '.join(command))
+  runner(command, check=True)
+
+
+def flash(path, board, port='auto', runner=subprocess.run):
+  download(path, board)
+  verify(path, board)
+  run_esptool(esptool_command(board, 'flash', port=port, path=path), runner=runner)
+
+
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('command', choices=('download', 'verify'))
+  parser.add_argument('command', choices=('download', 'verify', 'erase', 'flash'))
   parser.add_argument('--manifest', default='firmware/manifest.json')
   parser.add_argument('--board', default='ESP32_GENERIC')
-  source = parser.add_mutually_exclusive_group(required=True)
+  parser.add_argument('--port', default='auto')
+  source = parser.add_mutually_exclusive_group()
   source.add_argument('--output')
   source.add_argument('--input')
   args = parser.parse_args()
   board = load_board(args.manifest, args.board)
+  path = artifact_path(board, args.output or args.input)
   if args.command == 'download':
-    download(args.output, board)
-  else:
-    verify(args.input, board)
+    download(path, board)
+  elif args.command == 'verify':
+    verify(path, board)
+  elif args.command == 'erase':
+    run_esptool(esptool_command(board, 'erase', port=args.port))
+  elif args.command == 'flash':
+    flash(path, board, port=args.port)
 
 
 if __name__ == '__main__':

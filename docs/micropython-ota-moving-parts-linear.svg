@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">MicroPython OTA updater logical moving parts — linear pipeline</title>
+  <desc id="desc">Five ordered stages flow from inputs through startup, update control, transactional storage, and application outcome.</desc>
+  <defs>
+    <linearGradient id="head" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#073b70"/><stop offset="1" stop-color="#0874a5"/></linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#f2f8fc"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#123b5d" flood-opacity=".13"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#1680b8"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif}.title{fill:#fff;font-size:34px;font-weight:700}.subtitle{fill:#d9f2ff;font-size:15px}.stage-title{fill:#083d73;font-size:19px;font-weight:700}.body{fill:#355b77;font-size:13px}.small{fill:#587187;font-size:11px}.white{fill:#fff}.white-body{fill:#e7f7ff;font-size:12px}.chip{fill:#edf6fb;stroke:#bdd3e3}.line{fill:none;stroke:#1680b8;stroke-width:4;stroke-linecap:round;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="800" fill="#f7fafc"/>
+  <rect x="24" y="20" width="1152" height="92" rx="20" fill="url(#head)" filter="url(#shadow)"/>
+  <text class="title" x="600" y="61" text-anchor="middle">The OTA Solution as One Ordered Pipeline</text>
+  <text class="subtitle" x="600" y="87" text-anchor="middle">Each stage has one responsibility; application files advance left to right</text>
+
+  <path d="M228 378H258" class="line"/>
+  <path d="M458 378H488" class="line"/>
+  <path d="M688 378H718" class="line"/>
+  <path d="M918 378H948" class="line"/>
+
+  <!-- Stage 1 -->
+  <rect x="28" y="156" width="200" height="470" rx="18" fill="url(#card)" stroke="#93b7cf" stroke-width="2" filter="url(#shadow)"/>
+  <circle cx="58" cy="190" r="20" fill="#07518c"/><text x="58" y="197" text-anchor="middle" class="white" font-size="20" font-weight="700">1</text>
+  <text class="stage-title" x="88" y="197">Inputs</text>
+  <rect x="48" y="230" width="160" height="82" rx="11" fill="#26394d"/>
+  <text x="128" y="258" text-anchor="middle" class="white" font-size="15" font-weight="700">GitHub repository</text>
+  <text x="128" y="282" text-anchor="middle" class="white-body">branch SHA + src tree</text>
+  <rect x="48" y="330" width="160" height="82" rx="11" fill="#e8f5fc" stroke="#74b8dc"/>
+  <text x="128" y="358" text-anchor="middle" class="stage-title" font-size="15">env.py</text>
+  <text x="128" y="382" text-anchor="middle" class="body">remote • token • limits</text>
+  <rect x="48" y="430" width="160" height="112" rx="11" fill="#fff3cc" stroke="#dfa200"/>
+  <text x="128" y="458" text-anchor="middle" class="stage-title" font-size="15">Host + CI</text>
+  <text class="body" x="64" y="485"><tspan x="64">firmware manifest</tspan><tspan x="64" dy="20">flash + deploy</tspan><tspan x="64" dy="20">tests + smoke proof</tspan></text>
+  <text class="small" x="128" y="590" text-anchor="middle">Firmware is provisioned separately</text>
+
+  <!-- Stage 2 -->
+  <rect x="258" y="156" width="200" height="470" rx="18" fill="url(#card)" stroke="#60bcd6" stroke-width="2" filter="url(#shadow)"/>
+  <circle cx="288" cy="190" r="20" fill="#087bb6"/><text x="288" y="197" text-anchor="middle" class="white" font-size="20" font-weight="700">2</text>
+  <text class="stage-title" x="318" y="197">Startup</text>
+  <rect x="278" y="230" width="160" height="91" rx="11" fill="#e7f7ff" stroke="#087bb6"/>
+  <text x="358" y="260" text-anchor="middle" class="stage-title" font-size="15">boot.py</text>
+  <text x="358" y="284" text-anchor="middle" class="body">Wi-Fi + valid clock</text>
+  <rect x="278" y="342" width="160" height="91" rx="11" fill="#e7f7ff" stroke="#087bb6"/>
+  <text x="358" y="372" text-anchor="middle" class="stage-title" font-size="15">main.py</text>
+  <text x="358" y="396" text-anchor="middle" class="body">wire the collaborators</text>
+  <rect x="278" y="454" width="160" height="88" rx="11" fill="#073b70"/>
+  <text x="358" y="481" text-anchor="middle" class="white" font-size="14" font-weight="700">Trust gate</text>
+  <text x="358" y="505" text-anchor="middle" class="white-body">RTC • TLS • pinned CAs</text>
+  <text class="small" x="358" y="590" text-anchor="middle">Fail closed before HTTPS</text>
+
+  <!-- Stage 3 -->
+  <rect x="488" y="156" width="200" height="470" rx="18" fill="url(#card)" stroke="#318bb8" stroke-width="2" filter="url(#shadow)"/>
+  <circle cx="518" cy="190" r="20" fill="#07518c"/><text x="518" y="197" text-anchor="middle" class="white" font-size="20" font-weight="700">3</text>
+  <text class="stage-title" x="548" y="197">Control</text>
+  <rect x="508" y="230" width="160" height="91" rx="11" fill="#e7f7ff" stroke="#087bb6"/>
+  <text x="588" y="260" text-anchor="middle" class="stage-title" font-size="15">GitHub adapter</text>
+  <text x="588" y="284" text-anchor="middle" class="body">SHA + streamed files</text>
+  <rect x="508" y="342" width="160" height="122" rx="11" fill="#07518c"/>
+  <text x="588" y="374" text-anchor="middle" class="white" font-size="16" font-weight="700">OTAUpdater</text>
+  <text class="white-body" x="530" y="400"><tspan x="530">recover + compare</tspan><tspan x="530" dy="20">space check + stage</tspan><tspan x="530" dy="20">swap + confirm</tspan></text>
+  <rect x="508" y="485" width="160" height="57" rx="11" fill="#edf6fb" stroke="#93b7cf"/>
+  <text x="588" y="519" text-anchor="middle" class="stage-title" font-size="15">IO adapter</text>
+  <text class="small" x="588" y="590" text-anchor="middle">One transaction owner</text>
+
+  <!-- Stage 4 -->
+  <rect x="718" y="156" width="200" height="470" rx="18" fill="url(#card)" stroke="#55bca0" stroke-width="2" filter="url(#shadow)"/>
+  <circle cx="748" cy="190" r="20" fill="#0a8d60"/><text x="748" y="197" text-anchor="middle" class="white" font-size="20" font-weight="700">4</text>
+  <text class="stage-title" x="778" y="197">Storage</text>
+  <rect x="738" y="230" width="160" height="62" rx="10" fill="#fff1be" stroke="#df9800"/>
+  <text x="818" y="267" text-anchor="middle" class="stage-title" font-size="15">src.next</text>
+  <path d="M818 292V318" class="line"/>
+  <rect x="738" y="320" width="160" height="62" rx="10" fill="#ffe0e6" stroke="#e31837"/>
+  <text x="818" y="357" text-anchor="middle" class="stage-title" font-size="15">.ota-pending</text>
+  <path d="M818 382V408" class="line"/>
+  <rect x="738" y="410" width="160" height="62" rx="10" fill="#dceefa" stroke="#087bb6"/>
+  <text x="818" y="447" text-anchor="middle" class="stage-title" font-size="15">src.previous</text>
+  <path d="M818 472V498" class="line"/>
+  <rect x="738" y="500" width="160" height="62" rx="10" fill="#d9f4e1" stroke="#0b9a45"/>
+  <text x="818" y="537" text-anchor="middle" class="stage-title" font-size="15">src</text>
+  <text class="small" x="818" y="590" text-anchor="middle">Stage → marker → atomic rename</text>
+
+  <!-- Stage 5 -->
+  <rect x="948" y="156" width="224" height="470" rx="18" fill="url(#card)" stroke="#63be7b" stroke-width="2" filter="url(#shadow)"/>
+  <circle cx="978" cy="190" r="20" fill="#0b9a45"/><text x="978" y="197" text-anchor="middle" class="white" font-size="20" font-weight="700">5</text>
+  <text class="stage-title" x="1008" y="197">Application</text>
+  <rect x="970" y="230" width="180" height="82" rx="11" fill="#e7faed" stroke="#0b9a45"/>
+  <text x="1060" y="260" text-anchor="middle" class="stage-title" font-size="15">src.main.start(...)</text>
+  <text x="1060" y="284" text-anchor="middle" class="body">run the candidate</text>
+  <rect x="970" y="337" width="180" height="91" rx="11" fill="#d8f4e0" stroke="#0b9a45"/>
+  <text x="1060" y="368" text-anchor="middle" fill="#087237" font-size="15" font-weight="700">Healthy</text>
+  <text x="1060" y="392" text-anchor="middle" class="body">confirm + clean backup</text>
+  <rect x="970" y="453" width="180" height="91" rx="11" fill="#ffe1e6" stroke="#e31837"/>
+  <text x="1060" y="484" text-anchor="middle" fill="#b3132b" font-size="15" font-weight="700">Crash / reset</text>
+  <text x="1060" y="508" text-anchor="middle" class="body">rollback previous + reset</text>
+  <text class="small" x="1060" y="590" text-anchor="middle">Application owns confirmation</text>
+
+  <rect x="130" y="678" width="940" height="58" rx="14" fill="#edf4f8"/>
+  <text x="600" y="704" text-anchor="middle" class="stage-title" font-size="15">Design invariant</text>
+  <text x="600" y="725" text-anchor="middle" class="body">A new application is never trusted until it starts and explicitly confirms; every earlier state remains recoverable.</text>
+</svg>

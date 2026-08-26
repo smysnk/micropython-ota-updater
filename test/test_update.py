@@ -8,13 +8,11 @@ from lib.update import GitHub, IO, OTAUpdater
 
 
 class Log:
-  def __call__(self, *args, **kwargs):
-    if kwargs.get('append'):
-      return self
-    return None
+  def __init__(self):
+    self.messages = []
 
-  def append(self, name):
-    return self
+  def __call__(self, *args, **kwargs):
+    self.messages.append(' '.join(str(part) for part in args))
 
 
 class GitHubFixture:
@@ -37,11 +35,11 @@ class GitHubFixture:
 def updater(tmp_path, monkeypatch, github=None, minimum_free_bytes=0):
   monkeypatch.chdir(tmp_path)
   log = Log()
-  io = IO(os=os, logger=log)
+  io = IO(os=os, log=log)
   return OTAUpdater(
     io=io,
     github=github or GitHubFixture(),
-    logger=log,
+    log=log,
     machine=MagicMock(),
     minimumFreeBytes=minimum_free_bytes,
   )
@@ -134,6 +132,25 @@ def test_failed_download_keeps_current_application(tmp_path, monkeypatch):
   assert not Path('.ota-pending').exists()
 
 
+def test_failed_second_rename_restores_current_application(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch)
+  write_current()
+  move = ota.io.move
+
+  def fail_install(from_path, to_path):
+    if from_path == 'src.next':
+      raise OSError('second rename interrupted')
+    return move(from_path, to_path)
+
+  ota.io.move = fail_install
+  with pytest.raises(OSError, match='second rename interrupted'):
+    ota.update()
+
+  assert Path('src/.version').read_text() == 'old-sha'
+  assert not Path('src.next').exists()
+  assert not Path('.ota-pending').exists()
+
+
 def test_update_is_noop_when_versions_match(tmp_path, monkeypatch):
   ota = updater(tmp_path, monkeypatch, github=GitHubFixture(sha='same-sha'))
   write_current('same-sha')
@@ -154,7 +171,7 @@ def test_io_removes_nested_tree(tmp_path, monkeypatch):
   monkeypatch.chdir(tmp_path)
   Path('tree/child').mkdir(parents=True)
   Path('tree/child/file.bin').write_bytes(b'abc')
-  io = IO(os=os, logger=Log())
+  io = IO(os=os, log=Log())
 
   io.rmtree('tree')
 
@@ -170,7 +187,7 @@ def make_github(token=''):
     branch='feature/test',
     requests=requests,
     io=io,
-    logger=Log(),
+    log=Log(),
     token=token,
     ca_certs=MagicMock(),
   )
@@ -194,9 +211,9 @@ def test_github_sha_closes_response_and_passes_tls_configuration():
   assert github.sha() == 'abc123'
   response.close.assert_called_once()
   _, kwargs = requests.get.call_args
-  assert kwargs['verify'] is True
   assert kwargs['ca_certs'] is github.ca_certs
   assert kwargs['timeout'] == 10
+  assert callable(kwargs['log'])
 
 
 def test_github_reports_http_error_and_closes_response():
@@ -209,3 +226,19 @@ def test_github_reports_http_error_and_closes_response():
     github.sha()
 
   response.close.assert_called_once()
+
+
+def test_removed_io_compatibility_aliases_are_not_exposed():
+  assert not hasattr(IO, 'readFile')
+  assert not hasattr(IO, 'writeFile')
+
+
+def test_manual_rollback_restores_previous_application(tmp_path, monkeypatch):
+  ota = updater(tmp_path, monkeypatch)
+  write_current()
+  ota.update()
+
+  assert ota.rollback() is True
+  assert Path('src/.version').read_text() == 'old-sha'
+  assert not Path('src.previous').exists()
+  assert not Path('.ota-pending').exists()

@@ -1,9 +1,13 @@
+def _no_log(*parts):
+  return None
+
+
 class IO:
   DIRECTORY_TYPE = 0x4000
 
-  def __init__(self, os=None, logger=None):
+  def __init__(self, os=None, log=None):
     self.os = os
-    self.log = logger(append='io')
+    self.log = log or _no_log
 
   def exists(self, path):
     try:
@@ -54,10 +58,6 @@ class IO:
     with open(path, 'w') as destination:
       destination.write(contents)
 
-  # Compatibility aliases for applications using the original API.
-  readFile = read_file
-  writeFile = write_file
-
   def path(self, *parts):
     return '/'.join(parts).replace('//', '/').lstrip('/').rstrip('/')
 
@@ -81,7 +81,7 @@ class OTAUpdater:
     machine=None,
     io=None,
     github=None,
-    logger=None,
+    log=None,
   ):
     self.github = github
     self.mainDir = mainDir
@@ -93,7 +93,7 @@ class OTAUpdater:
     self.minimumFreeBytes = minimumFreeBytes
     self.machine = machine
     self.io = io
-    self.log = logger
+    self.log = log or _no_log
 
   def recover(self):
     """Recover conservatively from a reset during an update swap."""
@@ -130,7 +130,7 @@ class OTAUpdater:
     try:
       local_sha = self.io.read_file('%s/%s' % (self.mainDir, self.versionFile))
     except OSError:
-      self.log('No version file found.', name='compare')
+      self.log('No version file found.')
     remote_sha = self.github.sha()
     self.log('Local SHA:', local_sha)
     self.log('Remote SHA:', remote_sha)
@@ -199,25 +199,22 @@ class GitHub:
     requests=None,
     remote=None,
     io=None,
-    logger=None,
+    log=None,
     branch='main',
-    username='',
     token='',
     ca_certs=None,
     timeout=10,
   ):
-    del username  # Retained only for configuration compatibility.
     self.requests = requests
     self.remote = remote.rstrip('/').replace('https://github.com', 'https://api.github.com/repos')
     self.io = io
-    self.log = logger(append='github')
+    self.log = log or _no_log
     self.branch = branch
-    self.logger = logger
     self.ca_certs = ca_certs
     self.timeout = timeout
     self.headers = {
       'Accept': 'application/vnd.github+json',
-      'User-Agent': 'micropython-ota-updater/2',
+      'User-Agent': 'micropython-ota-updater/3',
       'X-GitHub-Api-Version': '2022-11-28',
     }
     if token:
@@ -226,10 +223,9 @@ class GitHub:
   def _get(self, url):
     return self.requests.get(
       url,
-      logger=self.logger,
+      log=self.log,
       headers=self.headers,
       timeout=self.timeout,
-      verify=True,
       ca_certs=self.ca_certs,
     )
 

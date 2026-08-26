@@ -7,8 +7,8 @@ Use this checklist for every MicroPython stable-version update.
 - Confirm the release is marked stable on the
   [official board download page](https://micropython.org/download/ESP32_GENERIC/).
 - Download the exact board artifact and independently calculate SHA-256.
-- Update `firmware/manifest.json`, `Makefile`, `mpremote`, and `mpy-cross`
-  together.
+- Update `firmware/manifest.json`, `mpremote`, and `mpy-cross` together. Board,
+  artifact, address, chip, and baud metadata belong only in the manifest.
 - Run `make firmware verify-firmware` and confirm the flash address against the
   board-specific official instructions.
 

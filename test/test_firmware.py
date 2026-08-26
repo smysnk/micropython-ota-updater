@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from lib import certificates
+from scripts import firmware
 
 
 def test_production_firmware_manifest_is_pinned():
@@ -12,6 +13,10 @@ def test_production_firmware_manifest_is_pinned():
   assert manifest['stable'] == 'v1.28.0'
   assert board['version'] == manifest['stable']
   assert board['status'] == 'production'
+  assert board['chip'] == 'esp32'
+  assert board['filename'] == 'ESP32_GENERIC-20260406-v1.28.0.bin'
+  assert board['flash_address'] == '0x1000'
+  assert board['baud'] == 460800
   assert board['url'].startswith('https://micropython.org/resources/firmware/')
   assert len(board['sha256']) == 64
   int(board['sha256'], 16)
@@ -24,3 +29,53 @@ def test_pinned_root_certificates_have_reviewed_fingerprints():
   assert hashlib.sha256(certificates.for_host('raw.githubusercontent.com')).hexdigest() == (
     '96bcec06264976f37460779acf28c5a7cfe8a3c0aae11a8ffcee05c0bddf08c6'
   )
+
+
+def test_manifest_generates_complete_esptool_commands():
+  board = firmware.load_board('firmware/manifest.json', 'ESP32_GENERIC')
+
+  erase = firmware.esptool_command(board, 'erase', port='/dev/ttyUSB0')
+  flash = firmware.esptool_command(
+    board,
+    'flash',
+    port='/dev/ttyUSB0',
+    path=Path(board['filename']),
+  )
+
+  assert erase[-5:] == ['--chip', 'esp32', '--port', '/dev/ttyUSB0', 'erase-flash']
+  assert flash[-7:] == [
+    '--port',
+    '/dev/ttyUSB0',
+    '--baud',
+    '460800',
+    'write-flash',
+    '0x1000',
+    board['filename'],
+  ]
+
+
+def test_auto_port_lets_esptool_discover_the_device():
+  board = firmware.load_board('firmware/manifest.json', 'ESP32_GENERIC')
+
+  command = firmware.esptool_command(board, 'erase')
+
+  assert '--port' not in command
+
+
+def test_flash_verifies_before_running_esptool(monkeypatch, tmp_path):
+  board = firmware.load_board('firmware/manifest.json', 'ESP32_GENERIC')
+  artifact = tmp_path / board['filename']
+  events = []
+  monkeypatch.setattr(firmware, 'download', lambda path, selected: events.append(('download', path)))
+  monkeypatch.setattr(firmware, 'verify', lambda path, selected: events.append(('verify', path)))
+
+  firmware.flash(
+    artifact,
+    board,
+    port='/dev/device',
+    runner=lambda command, check: events.append(('run', command, check)),
+  )
+
+  assert [event[0] for event in events] == ['download', 'verify', 'run']
+  assert events[-1][1][-3:] == ['write-flash', '0x1000', str(artifact)]
+  assert events[-1][2] is True

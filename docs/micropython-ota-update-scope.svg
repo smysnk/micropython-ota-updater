@@ -1,0 +1,200 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1040" viewBox="0 0 1400 1040" role="img" aria-labelledby="title description">
+  <title id="title">What the MicroPython OTA update replaces</title>
+  <desc id="description">The root bootstrap files stay in place. Only the application folder at slash src is staged, swapped, confirmed, or rolled back during an over-the-air update.</desc>
+
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbfe"/>
+      <stop offset="1" stop-color="#edf3f8"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#243fbd"/>
+      <stop offset="0.58" stop-color="#176d9a"/>
+      <stop offset="1" stop-color="#087f72"/>
+    </linearGradient>
+    <linearGradient id="managed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a8f7f"/>
+      <stop offset="1" stop-color="#12ad93"/>
+    </linearGradient>
+    <linearGradient id="stage" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e3edff"/>
+      <stop offset="1" stop-color="#d4dcfb"/>
+    </linearGradient>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="136%">
+      <feDropShadow dx="0" dy="5" stdDeviation="9" flood-color="#142235" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow-blue" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+      <path d="M0 0L11 5.5 0 11Z" fill="#435ad8"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+      <path d="M0 0L11 5.5 0 11Z" fill="#087f72"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+      .card { fill: #ffffff; stroke: #cbd7e3; stroke-width: 2; }
+      .section { fill: #203247; font-size: 14px; font-weight: 800; letter-spacing: 1.2px; }
+      .heading { fill: #17283d; font-size: 23px; font-weight: 800; }
+      .file { fill: #203247; font-size: 17px; font-weight: 750; }
+      .detail { fill: #65778a; font-size: 14px; }
+      .small { fill: #65778a; font-size: 12px; }
+      .root-path { fill: #203247; font-size: 18px; font-weight: 800; }
+      .state-title { fill: #ffffff; font-size: 14px; font-weight: 800; letter-spacing: 1px; }
+      .unchanged { fill: #33475d; font-size: 14px; font-weight: 700; }
+      .folder { fill: #ffffff; font-size: 25px; font-weight: 850; }
+      .folder-dark { fill: #203247; font-size: 22px; font-weight: 850; }
+      .folder-detail { fill: #ddfff8; font-size: 13px; }
+      .folder-detail-dark { fill: #687b91; font-size: 13px; }
+      .arrow { fill: none; stroke: #435ad8; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .arrow-green { fill: none; stroke: #087f72; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-green); }
+    </style>
+  </defs>
+
+  <rect width="1400" height="1040" rx="28" fill="url(#page)"/>
+
+  <!-- Header -->
+  <rect x="35" y="30" width="1330" height="115" rx="24" fill="url(#hero)" filter="url(#shadow)"/>
+  <text x="72" y="78" fill="#ffffff" font-size="34" font-weight="850">What gets replaced during OTA?</text>
+  <text x="72" y="117" fill="#dceeff" font-size="21">Only the application folder at <tspan fill="#ffffff" font-weight="850">/src/</tspan> — the root bootstrap remains in place.</text>
+
+  <!-- Delivery paths -->
+  <text class="section" x="58" y="183">TWO DELIVERY PATHS</text>
+
+  <rect class="card" x="55" y="200" width="620" height="235" rx="21" filter="url(#shadow)"/>
+  <rect x="55" y="200" width="620" height="48" rx="21" fill="#435ad8"/>
+  <rect x="55" y="228" width="620" height="20" fill="#435ad8"/>
+  <text x="78" y="231" fill="#ffffff" font-size="20" font-weight="800">Updater repository</text>
+  <text x="640" y="231" text-anchor="end" fill="#e9ecff" font-size="13">manual host deployment</text>
+
+  <text class="file" x="82" y="281">make deploy</text>
+  <text class="detail" x="82" y="306">Copies the updater bootstrap to the device root:</text>
+
+  <rect x="82" y="326" width="126" height="70" rx="11" fill="#eef0ff"/>
+  <text class="file" x="145" y="352" text-anchor="middle">boot.py</text>
+  <text class="small" x="145" y="376" text-anchor="middle">→ /boot.py</text>
+  <rect x="220" y="326" width="126" height="70" rx="11" fill="#eef0ff"/>
+  <text class="file" x="283" y="352" text-anchor="middle">main.py</text>
+  <text class="small" x="283" y="376" text-anchor="middle">→ /main.py</text>
+  <rect x="358" y="326" width="126" height="70" rx="11" fill="#eef0ff"/>
+  <text class="file" x="421" y="352" text-anchor="middle">env file</text>
+  <text class="small" x="421" y="376" text-anchor="middle">→ /env.py</text>
+  <rect x="496" y="326" width="150" height="70" rx="11" fill="#eef0ff"/>
+  <text class="file" x="571" y="352" text-anchor="middle">device/lib/</text>
+  <text class="small" x="571" y="376" text-anchor="middle">→ /lib/</text>
+
+  <rect class="card" x="725" y="200" width="620" height="235" rx="21" filter="url(#shadow)"/>
+  <rect x="725" y="200" width="620" height="48" rx="21" fill="url(#managed)"/>
+  <rect x="725" y="228" width="620" height="20" fill="#0b927f"/>
+  <text x="748" y="231" fill="#ffffff" font-size="20" font-weight="800">Application repository</text>
+  <text x="1310" y="231" text-anchor="end" fill="#ddfff8" font-size="13">automatic over-the-air delivery</text>
+
+  <rect x="750" y="273" width="250" height="125" rx="16" fill="#e6f7f3" stroke="#89d1c4" stroke-width="2"/>
+  <path d="M771 293h68l13 15h125v69H771Z" fill="#ffffff" stroke="#0a8f7f" stroke-width="2"/>
+  <text class="folder-dark" x="790" y="335">remote src/</text>
+  <text class="detail" x="790" y="361">application files + main.py</text>
+
+  <text x="1044" y="350" text-anchor="middle" fill="#087f72" font-size="31" font-weight="850">&#8594;</text>
+  <text x="1044" y="315" text-anchor="middle" fill="#087f72" font-size="12" font-weight="800">DOWNLOAD</text>
+
+  <rect x="1088" y="273" width="230" height="125" rx="16" fill="url(#managed)"/>
+  <path d="M1110 293h68l13 15h104v69h-185Z" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+  <text class="folder" x="1129" y="335">/src/</text>
+  <text class="folder-detail" x="1129" y="361">OTA-managed application</text>
+
+  <!-- Persistent device root callout -->
+  <rect x="55" y="458" width="1290" height="72" rx="17" fill="#ffffff" stroke="#8ca0b5" stroke-width="2"/>
+  <rect x="74" y="476" width="133" height="36" rx="18" fill="#203247"/>
+  <text x="140" y="500" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="800">DEVICE ROOT /</text>
+  <text class="root-path" x="230" y="500">boot.py</text>
+  <text x="307" y="500" fill="#92a1b1" font-size="18">·</text>
+  <text class="root-path" x="329" y="500">main.py</text>
+  <text x="413" y="500" fill="#92a1b1" font-size="18">·</text>
+  <text class="root-path" x="435" y="500">env.py</text>
+  <text x="501" y="500" fill="#92a1b1" font-size="18">·</text>
+  <text class="root-path" x="523" y="500">lib/</text>
+  <rect x="590" y="477" width="330" height="34" rx="17" fill="#eef2f6"/>
+  <text x="755" y="499" text-anchor="middle" fill="#4c6176" font-size="14" font-weight="800">UNCHANGED DURING APPLICATION OTA</text>
+  <text x="1315" y="500" text-anchor="end" fill="#087f72" font-size="15" font-weight="800">/src/ IS THE REPLACEABLE BOUNDARY</text>
+
+  <!-- State sequence -->
+  <text class="section" x="58" y="575">THE /src/ TRANSACTION</text>
+
+  <!-- Before -->
+  <rect class="card" x="55" y="596" width="390" height="323" rx="22" filter="url(#shadow)"/>
+  <rect x="55" y="596" width="390" height="50" rx="22" fill="#203247"/>
+  <rect x="55" y="625" width="390" height="21" fill="#203247"/>
+  <text class="state-title" x="79" y="628">1 · BEFORE</text>
+  <text x="417" y="628" text-anchor="end" fill="#dce7f2" font-size="13">current app is live</text>
+
+  <rect x="79" y="668" width="342" height="62" rx="13" fill="#eef2f6"/>
+  <text class="unchanged" x="98" y="693">/boot.py · /main.py · /env.py · /lib/</text>
+  <text class="small" x="98" y="716">persistent updater bootstrap</text>
+
+  <rect x="79" y="751" width="342" height="125" rx="17" fill="url(#managed)"/>
+  <path d="M104 774h86l15 17h190v61H104Z" fill="none" stroke="#ffffff" stroke-width="2.5"/>
+  <text class="folder" x="124" y="818">/src/</text>
+  <text class="folder-detail" x="124" y="843">CURRENT APPLICATION · ACTIVE</text>
+  <text x="250" y="902" text-anchor="middle" fill="#087f72" font-size="13" font-weight="800">kept running while the new tree downloads</text>
+
+  <!-- State arrow -->
+  <text x="475" y="772" text-anchor="middle" fill="#435ad8" font-size="32" font-weight="850">&#8594;</text>
+
+  <!-- Stage -->
+  <rect class="card" x="505" y="596" width="390" height="323" rx="22" filter="url(#shadow)"/>
+  <rect x="505" y="596" width="390" height="50" rx="22" fill="#435ad8"/>
+  <rect x="505" y="625" width="390" height="21" fill="#435ad8"/>
+  <text class="state-title" x="529" y="628">2 · STAGE</text>
+  <text x="867" y="628" text-anchor="end" fill="#eaedff" font-size="13">download + verify</text>
+
+  <rect x="529" y="668" width="342" height="62" rx="13" fill="#eef2f6"/>
+  <text class="unchanged" x="548" y="693">root bootstrap remains unchanged</text>
+  <text class="small" x="548" y="716">the active /src/ is still untouched</text>
+
+  <rect x="529" y="749" width="158" height="106" rx="15" fill="#e7f6f3" stroke="#6cc8ba" stroke-width="2"/>
+  <text class="folder-dark" x="549" y="785">/src/</text>
+  <text class="folder-detail-dark" x="549" y="810">current · active</text>
+  <text class="folder-detail-dark" x="549" y="832">old SHA</text>
+
+  <rect x="701" y="749" width="170" height="106" rx="15" fill="url(#stage)" stroke="#8595de" stroke-width="2"/>
+  <text class="folder-dark" x="721" y="785">/src.next/</text>
+  <text class="folder-detail-dark" x="721" y="810">new tree · staging</text>
+  <text class="folder-detail-dark" x="721" y="832">version readback</text>
+
+  <rect x="620" y="870" width="160" height="31" rx="15" fill="#fff1e7" stroke="#dc895a"/>
+  <text x="700" y="891" text-anchor="middle" fill="#a64f2c" font-size="13" font-weight="800">/.ota-pending</text>
+
+  <!-- State arrow -->
+  <text x="925" y="772" text-anchor="middle" fill="#087f72" font-size="32" font-weight="850">&#8594;</text>
+
+  <!-- Swap -->
+  <rect class="card" x="955" y="596" width="390" height="323" rx="22" filter="url(#shadow)"/>
+  <rect x="955" y="596" width="390" height="50" rx="22" fill="url(#managed)"/>
+  <rect x="955" y="625" width="390" height="21" fill="#0b927f"/>
+  <text class="state-title" x="979" y="628">3 · SWAP + CONFIRM</text>
+  <text x="1317" y="628" text-anchor="end" fill="#ddfff8" font-size="13">atomic directory renames</text>
+
+  <rect x="979" y="668" width="342" height="62" rx="13" fill="#eef2f6"/>
+  <text class="unchanged" x="998" y="693">root bootstrap remains unchanged</text>
+  <text class="small" x="998" y="716">it starts and supervises the new app</text>
+
+  <rect x="979" y="749" width="158" height="106" rx="15" fill="url(#managed)"/>
+  <text class="folder" x="999" y="785">/src/</text>
+  <text class="folder-detail" x="999" y="810">NEW · ACTIVE</text>
+  <text class="folder-detail" x="999" y="832">must confirm health</text>
+
+  <rect x="1151" y="749" width="170" height="106" rx="15" fill="#fff1e7" stroke="#dc895a" stroke-width="2"/>
+  <text class="folder-dark" x="1171" y="785">/src.previous/</text>
+  <text class="folder-detail-dark" x="1171" y="810">OLD · ROLLBACK</text>
+  <text class="folder-detail-dark" x="1171" y="832">kept until confirm()</text>
+
+  <rect x="989" y="870" width="155" height="31" rx="15" fill="#e6f7f3"/>
+  <text x="1067" y="891" text-anchor="middle" fill="#087f72" font-size="12" font-weight="800">CONFIRM → CLEAN UP</text>
+  <rect x="1156" y="870" width="155" height="31" rx="15" fill="#fff1e7"/>
+  <text x="1234" y="891" text-anchor="middle" fill="#a64f2c" font-size="12" font-weight="800">FAIL → RESTORE OLD</text>
+
+  <!-- Emphasis footer -->
+  <rect x="55" y="947" width="1290" height="62" rx="18" fill="#203247"/>
+  <text x="80" y="985" fill="#dce7f2" font-size="18">OTA replacement scope</text>
+  <rect x="280" y="960" width="150" height="36" rx="18" fill="url(#managed)"/>
+  <text x="355" y="985" text-anchor="middle" fill="#ffffff" font-size="19" font-weight="850">/src/ only</text>
+  <text x="460" y="985" fill="#dce7f2" font-size="16">Firmware and the root updater bootstrap are updated separately from a host.</text>
+</svg>

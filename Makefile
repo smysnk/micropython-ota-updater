@@ -1,39 +1,31 @@
 PYTHON ?= python3
 ESP_BOARD ?= ESP32_GENERIC
-MICROPYTHON_VERSION ?= v1.28.0
-MICROPYTHON_RELEASE_DATE ?= 20260406
-ESP_IMAGE ?= $(ESP_BOARD)-$(MICROPYTHON_RELEASE_DATE)-$(MICROPYTHON_VERSION).bin
 FIRMWARE_MANIFEST ?= firmware/manifest.json
-ESPTOOL ?= $(PYTHON) -m esptool
 MPREMOTE ?= $(PYTHON) -m mpremote
-MPREMOTE_PORT ?= auto
-ENV_FILE ?= src/env.py
-export RSHELL_PORT ?= /dev/ttyUSB0
+DEVICE_SOURCE ?= device
+ENV_FILE ?= device/env.local.py
+SERIAL_PORT ?= auto
 
 firmware:
-	$(PYTHON) scripts/firmware.py download --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)" --output "$(ESP_IMAGE)"
+	$(PYTHON) scripts/firmware.py download --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)"
 
 verify-firmware:
-	$(PYTHON) scripts/firmware.py verify --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)" --input "$(ESP_IMAGE)"
+	$(PYTHON) scripts/firmware.py verify --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)"
 
 erase:
-	$(ESPTOOL) --chip esp32 --port "$(RSHELL_PORT)" erase_flash
+	$(PYTHON) scripts/firmware.py erase --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)" --port "$(SERIAL_PORT)"
 
-flash: firmware
-	$(ESPTOOL) --chip esp32 --port "$(RSHELL_PORT)" --baud 460800 write_flash 0x1000 "$(ESP_IMAGE)"
-
-image: flash
+flash:
+	$(PYTHON) scripts/firmware.py flash --manifest "$(FIRMWARE_MANIFEST)" --board "$(ESP_BOARD)" --port "$(SERIAL_PORT)"
 
 deploy:
-	$(MPREMOTE) connect "$(MPREMOTE_PORT)" fs cp src/boot.py :boot.py + fs cp src/main.py :main.py + fs cp "$(ENV_FILE)" :env.py + fs cp -r src/lib : + soft-reset
-
-rsync: deploy
+	$(MPREMOTE) connect "$(SERIAL_PORT)" fs cp "$(DEVICE_SOURCE)/boot.py" :boot.py + fs cp "$(DEVICE_SOURCE)/main.py" :main.py + fs cp "$(ENV_FILE)" :env.py + fs cp -r "$(DEVICE_SOURCE)/lib" : + soft-reset
 
 repl:
-	$(MPREMOTE) connect "$(MPREMOTE_PORT)" repl
+	$(MPREMOTE) connect "$(SERIAL_PORT)" repl
 
 smoke-test:
-	$(PYTHON) scripts/hardware_smoke.py --port "$(MPREMOTE_PORT)"
+	$(PYTHON) scripts/hardware_smoke.py --port "$(SERIAL_PORT)"
 
 clean:
 	find . -type d \( -name __pycache__ -o -name .pytest_cache -o -name "*.egg-info" -o -name build -o -name dist \) -prune -exec rm -rf {} +
@@ -57,7 +49,7 @@ test-mpy:
 	$(PYTHON) scripts/check_micropython_compat.py
 
 test-live-tls:
-	PYTHONPATH=src $(PYTHON) scripts/check_certificates.py
+	PYTHONPATH=device $(PYTHON) scripts/check_certificates.py
 
 test-ci:
 	npm run test:ci
@@ -66,4 +58,4 @@ test-ci:
 test-dev:
 	ptw --poll
 
-.PHONY: firmware verify-firmware erase flash image deploy rsync repl smoke-test clean install install-python-dev install-dev test test-python test-mpy test-live-tls test-ci test-dev
+.PHONY: firmware verify-firmware erase flash deploy repl smoke-test clean install install-python-dev install-dev test test-python test-mpy test-live-tls test-ci test-dev

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">MicroPython OTA updater logical moving parts — dual lane</title>
+  <desc id="desc">Two synchronized left-to-right lanes separate control decisions from downloaded data and filesystem state.</desc>
+  <defs>
+    <linearGradient id="head" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#173b67"/><stop offset="1" stop-color="#236f86"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#183d58" flood-opacity=".12"/></filter>
+    <marker id="blue" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5.5L0 11Z" fill="#1680b8"/></marker>
+    <marker id="green" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5.5L0 11Z" fill="#0b9a45"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif}.title{fill:#fff;font-size:34px;font-weight:700}.subtitle{fill:#dcf3fb;font-size:15px}.lane-title{fill:#fff;font-size:18px;font-weight:700}.card-title{fill:#083d73;font-size:16px;font-weight:700}.body{fill:#365c76;font-size:12px}.small{fill:#60798c;font-size:11px}.blue-line{fill:none;stroke:#1680b8;stroke-width:4;stroke-linecap:round;marker-end:url(#blue)}.green-line{fill:none;stroke:#0b9a45;stroke-width:4;stroke-linecap:round;marker-end:url(#green)}.sync{fill:none;stroke:#8298a9;stroke-width:3;stroke-dasharray:6 6}
+    </style>
+  </defs>
+  <rect width="1200" height="800" fill="#f7fafc"/>
+  <rect x="24" y="20" width="1152" height="88" rx="20" fill="url(#head)" filter="url(#shadow)"/>
+  <text class="title" x="600" y="59" text-anchor="middle">Two Synchronized Lanes</text>
+  <text class="subtitle" x="600" y="84" text-anchor="middle">Control decisions stay separate from downloaded data and filesystem mutations</text>
+
+  <!-- Column headings -->
+  <text class="small" x="290" y="145" text-anchor="middle">INPUT</text>
+  <text class="small" x="500" y="145" text-anchor="middle">TRUST</text>
+  <text class="small" x="710" y="145" text-anchor="middle">TRANSACTION</text>
+  <text class="small" x="920" y="145" text-anchor="middle">COMMIT</text>
+  <text class="small" x="1090" y="145" text-anchor="middle">OUTCOME</text>
+
+  <!-- Control lane -->
+  <rect x="46" y="168" width="1108" height="220" rx="18" fill="#eef7fc" stroke="#72afd0" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="46" y="168" width="146" height="220" rx="18" fill="#07518c"/><rect x="170" y="168" width="22" height="220" fill="#07518c"/>
+  <text class="lane-title" x="119" y="232" text-anchor="middle">CONTROL</text>
+  <text x="119" y="257" text-anchor="middle" fill="#dcefff" font-size="12">what should</text><text x="119" y="275" text-anchor="middle" fill="#dcefff" font-size="12">happen next?</text>
+
+  <rect x="218" y="207" width="144" height="132" rx="12" fill="#fff" stroke="#93b7cf"/>
+  <text class="card-title" x="290" y="237" text-anchor="middle">env.py + host</text>
+  <text class="body" x="238" y="263"><tspan x="238">remote + branch</tspan><tspan x="238" dy="20">timeouts + limits</tspan><tspan x="238" dy="20">firmware + deploy</tspan></text>
+  <path class="blue-line" d="M362 273H412"/>
+  <rect x="412" y="207" width="176" height="132" rx="12" fill="#e5f5fc" stroke="#1680b8"/>
+  <text class="card-title" x="500" y="237" text-anchor="middle">boot.py → main.py</text>
+  <text class="body" x="436" y="263"><tspan x="436">Wi-Fi + RTC</tspan><tspan x="436" dy="20">verified TLS trust</tspan><tspan x="436" dy="20">construct services</tspan></text>
+  <path class="blue-line" d="M588 273H622"/>
+  <rect x="622" y="207" width="176" height="132" rx="12" fill="#07518c"/>
+  <text x="710" y="237" text-anchor="middle" fill="#fff" font-size="16" font-weight="700">OTAUpdater</text>
+  <text x="646" y="263" fill="#dcefff" font-size="12"><tspan x="646">recover + compare</tspan><tspan x="646" dy="20">space check + stage</tspan><tspan x="646" dy="20">swap + await health</tspan></text>
+  <path class="green-line" d="M798 273H832"/>
+  <rect x="832" y="207" width="176" height="132" rx="12" fill="#e6f8eb" stroke="#0b9a45"/>
+  <text class="card-title" x="920" y="237" text-anchor="middle">Application</text>
+  <text class="body" x="856" y="263"><tspan x="856">src.main.start(...)</tspan><tspan x="856" dy="20">reach healthy point</tspan><tspan x="856" dy="20">call confirm()</tspan></text>
+  <path class="green-line" d="M1008 273H1030"/>
+  <rect x="1030" y="207" width="100" height="132" rx="12" fill="#d9f4e1" stroke="#0b9a45"/>
+  <text x="1080" y="249" text-anchor="middle" fill="#087237" font-size="15" font-weight="700">Confirmed</text>
+  <text class="body" x="1080" y="276" text-anchor="middle">or rollback</text><text class="body" x="1080" y="295" text-anchor="middle">on failure</text>
+
+  <!-- Data lane -->
+  <rect x="46" y="432" width="1108" height="220" rx="18" fill="#f3faf7" stroke="#71b99a" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="46" y="432" width="146" height="220" rx="18" fill="#0a8d60"/><rect x="170" y="432" width="22" height="220" fill="#0a8d60"/>
+  <text class="lane-title" x="119" y="496" text-anchor="middle">DATA</text>
+  <text x="119" y="521" text-anchor="middle" fill="#e0f8ed" font-size="12">what exists</text><text x="119" y="539" text-anchor="middle" fill="#e0f8ed" font-size="12">on disk?</text>
+
+  <rect x="218" y="471" width="144" height="132" rx="12" fill="#26394d"/>
+  <text x="290" y="501" text-anchor="middle" fill="#fff" font-size="16" font-weight="700">GitHub</text>
+  <text x="238" y="527" fill="#deedf5" font-size="12"><tspan x="238">branch HEAD SHA</tspan><tspan x="238" dy="20">contents API</tspan><tspan x="238" dy="20">raw files</tspan></text>
+  <path class="blue-line" d="M362 537H412"/>
+  <rect x="412" y="471" width="176" height="132" rx="12" fill="#e5f5fc" stroke="#1680b8"/>
+  <text class="card-title" x="500" y="501" text-anchor="middle">GitHub adapter</text>
+  <text class="body" x="436" y="527"><tspan x="436">verified requests</tspan><tspan x="436" dy="20">stream 512-byte reads</tspan><tspan x="436" dy="20">close every response</tspan></text>
+  <path class="blue-line" d="M588 537H622"/>
+  <rect x="622" y="471" width="176" height="132" rx="12" fill="#fff1be" stroke="#df9800"/>
+  <text class="card-title" x="710" y="501" text-anchor="middle">src.next</text>
+  <text class="body" x="646" y="527"><tspan x="646">downloaded tree</tspan><tspan x="646" dy="20">verified .version</tspan><tspan x="646" dy="20">.ota-pending marker</tspan></text>
+  <path class="green-line" d="M798 537H832"/>
+  <rect x="832" y="471" width="176" height="132" rx="12" fill="#d9f4e1" stroke="#0b9a45"/>
+  <text class="card-title" x="920" y="501" text-anchor="middle">Atomic rename</text>
+  <text class="body" x="856" y="527"><tspan x="856">src → src.previous</tspan><tspan x="856" dy="20">src.next → src</tspan><tspan x="856" dy="20">candidate becomes active</tspan></text>
+  <path class="green-line" d="M1008 537H1030"/>
+  <rect x="1030" y="471" width="100" height="132" rx="12" fill="#dceefa" stroke="#1680b8"/>
+  <text class="card-title" x="1080" y="511" text-anchor="middle" font-size="14">Cleanup</text>
+  <text class="body" x="1080" y="540" text-anchor="middle">marker +</text><text class="body" x="1080" y="559" text-anchor="middle">backup</text>
+
+  <!-- Synchronized checkpoints -->
+  <path class="sync" d="M500 339V471"/>
+  <path class="sync" d="M710 339V471"/>
+  <path class="sync" d="M920 339V471"/>
+  <text class="small" x="509" y="409">trust</text><text class="small" x="719" y="409">stage</text><text class="small" x="929" y="409">commit</text>
+
+  <rect x="173" y="700" width="854" height="54" rx="14" fill="#edf4f8"/>
+  <text class="card-title" x="600" y="724" text-anchor="middle" font-size="14">The lanes meet only at explicit checkpoints</text>
+  <text class="body" x="600" y="744" text-anchor="middle">Trust enables download • updater creates state • application health authorizes cleanup</text>
+</svg>

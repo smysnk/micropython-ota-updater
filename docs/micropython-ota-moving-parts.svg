@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">MicroPython OTA Updater logical moving parts</title>
+  <desc id="desc">An architecture infographic showing host provisioning, GitHub, trusted device startup, the OTA update engine, transactional filesystem state, and application confirmation or rollback.</desc>
+  <defs>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#073b70"/>
+      <stop offset="0.55" stop-color="#06699d"/>
+      <stop offset="1" stop-color="#075081"/>
+    </linearGradient>
+    <linearGradient id="device" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f5fbff"/>
+      <stop offset="1" stop-color="#eefaf5"/>
+    </linearGradient>
+    <linearGradient id="blue-card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9f6ff"/>
+      <stop offset="1" stop-color="#ceeafa"/>
+    </linearGradient>
+    <linearGradient id="green-card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e7faed"/>
+      <stop offset="1" stop-color="#c9efd5"/>
+    </linearGradient>
+    <linearGradient id="amber-card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8dd"/>
+      <stop offset="1" stop-color="#ffe9a5"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#062f58" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow-blue" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L11 5.5L0 11Z" fill="#087bb6"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L11 5.5L0 11Z" fill="#0b9a45"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L11 5.5L0 11Z" fill="#e31837"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L11 5.5L0 11Z" fill="#71859a"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; }
+      .title { fill: #fff; font-size: 34px; font-weight: 700; }
+      .subtitle { fill: #d9efff; font-size: 15px; }
+      .zone-title { fill: #073b70; font-size: 17px; font-weight: 700; letter-spacing: .2px; }
+      .card-title { fill: #073b70; font-size: 17px; font-weight: 700; }
+      .body { fill: #294f70; font-size: 13px; }
+      .small { fill: #47677f; font-size: 11px; }
+      .white-title { fill: #fff; font-size: 17px; font-weight: 700; }
+      .white-body { fill: #e9f7ff; font-size: 12px; }
+      .label { fill: #073b70; font-size: 12px; font-weight: 700; }
+      .step { fill: url(#blue-card); stroke: #087bb6; stroke-width: 2; }
+      .success { fill: url(#green-card); stroke: #0b9a45; stroke-width: 2; }
+      .warning { fill: url(#amber-card); stroke: #df9800; stroke-width: 2; }
+      .line-blue { fill: none; stroke: #087bb6; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .line-green { fill: none; stroke: #0b9a45; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-green); }
+      .line-red { fill: none; stroke: #e31837; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-red); }
+      .line-gray { fill: none; stroke: #71859a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-gray); }
+      .line-dashed { stroke-dasharray: 7 7; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="900" fill="#fff"/>
+  <rect x="20" y="18" width="1160" height="88" rx="18" fill="url(#header)" filter="url(#shadow)"/>
+  <text class="title" x="600" y="57" text-anchor="middle">MicroPython OTA Updater — Logical Moving Parts</text>
+  <text class="subtitle" x="600" y="82" text-anchor="middle">A resilient application updater running on top of stable, separately flashed firmware</text>
+
+  <!-- External systems -->
+  <rect x="24" y="166" width="194" height="238" rx="16" fill="#f1f7fc" stroke="#9ab6ce" stroke-width="2"/>
+  <rect x="24" y="166" width="194" height="46" rx="16" fill="#26394d"/>
+  <rect x="24" y="194" width="194" height="18" fill="#26394d"/>
+  <text class="white-title" x="121" y="196" text-anchor="middle">GitHub repository</text>
+  <text class="card-title" x="46" y="247">Application source</text>
+  <text class="body" x="46" y="272"><tspan x="46">• branch HEAD commit SHA</tspan><tspan x="46" dy="22">• recursive src tree</tspan><tspan x="46" dy="22">• raw file downloads</tspan></text>
+  <rect x="45" y="346" width="152" height="36" rx="8" fill="#fff" stroke="#9ab6ce"/>
+  <text class="label" x="121" y="369" text-anchor="middle">API + raw content</text>
+
+  <rect x="24" y="467" width="194" height="277" rx="16" fill="#fff8df" stroke="#e5bd3c" stroke-width="2"/>
+  <rect x="24" y="467" width="194" height="46" rx="16" fill="#a46600"/>
+  <rect x="24" y="495" width="194" height="18" fill="#a46600"/>
+  <text class="white-title" x="121" y="497" text-anchor="middle">Host + CI tooling</text>
+  <text class="card-title" x="46" y="548">Provision and prove</text>
+  <text class="body" x="46" y="573"><tspan x="46">• pinned firmware manifest</tspan><tspan x="46" dy="22">• flash with esptool</tspan><tspan x="46" dy="22">• deploy with mpremote</tspan><tspan x="46" dy="22">• pytest + mpy-cross</tspan><tspan x="46" dy="22">• hardware smoke test</tspan></text>
+  <rect x="45" y="686" width="152" height="36" rx="8" fill="#fff" stroke="#e5bd3c"/>
+  <text class="label" x="121" y="709" text-anchor="middle">firmware ≠ OTA payload</text>
+
+  <!-- Device system boundary -->
+  <rect x="250" y="132" width="926" height="678" rx="22" fill="url(#device)" stroke="#5aa7c8" stroke-width="3" filter="url(#shadow)"/>
+  <text class="zone-title" x="280" y="167">ESP32 device boundary</text>
+  <text class="small" x="1142" y="167" text-anchor="end">MicroPython v1.28 • application files update independently</text>
+
+  <!-- Startup -->
+  <rect class="step" x="282" y="190" width="238" height="92" rx="12"/>
+  <circle cx="310" cy="218" r="17" fill="#07518c"/>
+  <text x="310" y="224" text-anchor="middle" fill="#fff" font-size="17" font-weight="700">1</text>
+  <text class="card-title" x="338" y="221">Trusted startup</text>
+  <text class="body" x="304" y="246"><tspan x="304">boot.py connects Wi-Fi</tspan><tspan x="304" dy="19">and establishes a valid clock</tspan></text>
+
+  <rect class="step" x="560" y="190" width="238" height="92" rx="12"/>
+  <circle cx="588" cy="218" r="17" fill="#07518c"/>
+  <text x="588" y="224" text-anchor="middle" fill="#fff" font-size="17" font-weight="700">2</text>
+  <text class="card-title" x="616" y="221">Bootstrap</text>
+  <text class="body" x="582" y="246"><tspan x="582">main.py wires logging, IO,</tspan><tspan x="582" dy="19">GitHub and OTAUpdater</tspan></text>
+
+  <rect class="step" x="838" y="190" width="300" height="92" rx="12"/>
+  <text class="card-title" x="860" y="221">Configuration</text>
+  <text class="body" x="860" y="246"><tspan x="860">env.py supplies remote, branch, token,</tspan><tspan x="860" dy="19">timeouts, logging and free-space floor</tspan></text>
+
+  <path class="line-blue" d="M520 236 H560"/>
+  <path class="line-gray" d="M838 236 H806 Q798 236 798 244 V318"/>
+
+  <!-- Trust band -->
+  <rect x="282" y="306" width="856" height="48" rx="10" fill="#073b70"/>
+  <text class="white-title" x="306" y="336">Trust gate</text>
+  <text class="white-body" x="410" y="335">valid RTC</text>
+  <circle cx="488" cy="330" r="4" fill="#6bd394"/>
+  <text class="white-body" x="505" y="335">verified TLS</text>
+  <circle cx="596" cy="330" r="4" fill="#6bd394"/>
+  <text class="white-body" x="613" y="335">host-specific pinned CA roots</text>
+  <circle cx="805" cy="330" r="4" fill="#6bd394"/>
+  <text class="white-body" x="822" y="335">timeouts + bounded redirects</text>
+
+  <!-- Core moving parts -->
+  <rect class="step" x="282" y="382" width="230" height="126" rx="13"/>
+  <text class="card-title" x="397" y="415" text-anchor="middle">GitHub adapter</text>
+  <text class="body" x="304" y="442"><tspan x="304">• reads branch HEAD SHA</tspan><tspan x="304" dy="21">• walks the contents API</tspan><tspan x="304" dy="21">• streams each file to disk</tspan></text>
+
+  <rect x="550" y="374" width="306" height="142" rx="15" fill="#07518c" filter="url(#shadow)"/>
+  <text class="white-title" x="703" y="409" text-anchor="middle">OTAUpdater</text>
+  <text class="white-body" x="575" y="437"><tspan x="575">recover → compare → space check → stage</tspan><tspan x="575" dy="22">→ verify marker → swap → confirm / rollback</tspan></text>
+  <rect x="591" y="477" width="224" height="24" rx="12" fill="#0d6eaa"/>
+  <text x="703" y="494" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">owns the update transaction</text>
+
+  <rect class="success" x="894" y="382" width="244" height="126" rx="13"/>
+  <text class="card-title" x="1016" y="415" text-anchor="middle">Application contract</text>
+  <text class="body" x="916" y="442"><tspan x="916">src.main.start(..., updater)</tspan><tspan x="916" dy="21">healthy → updater.confirm()</tspan><tspan x="916" dy="21">crash → rollback() + reset</tspan></text>
+
+  <path class="line-blue" d="M550 432 H512"/>
+  <path class="line-green" d="M856 445 H894"/>
+  <path class="line-blue" d="M218 330 H252 Q266 330 266 344 V426 Q266 445 282 445"/>
+  <text class="small" x="233" y="317">SHA + files</text>
+
+  <!-- Transactional filesystem -->
+  <rect x="282" y="548" width="856" height="222" rx="16" fill="#fff" stroke="#9ab6ce" stroke-width="2"/>
+  <text class="zone-title" x="306" y="582">Transactional filesystem state</text>
+  <text class="small" x="1114" y="581" text-anchor="end">IO isolates MicroPython filesystem differences</text>
+
+  <rect x="306" y="611" width="164" height="86" rx="12" fill="#fff1bf" stroke="#df9800" stroke-width="2"/>
+  <text class="card-title" x="388" y="643" text-anchor="middle">src.next</text>
+  <text class="body" x="388" y="669" text-anchor="middle">download staging</text>
+
+  <rect x="505" y="611" width="164" height="86" rx="12" fill="#d8f4e0" stroke="#0b9a45" stroke-width="2"/>
+  <text class="card-title" x="587" y="643" text-anchor="middle">src</text>
+  <text class="body" x="587" y="669" text-anchor="middle">active application</text>
+
+  <rect x="704" y="611" width="164" height="86" rx="12" fill="#dceefa" stroke="#087bb6" stroke-width="2"/>
+  <text class="card-title" x="786" y="643" text-anchor="middle">src.previous</text>
+  <text class="body" x="786" y="669" text-anchor="middle">rollback copy</text>
+
+  <rect x="903" y="611" width="202" height="86" rx="12" fill="#ffe1e6" stroke="#e31837" stroke-width="2"/>
+  <text class="card-title" x="1004" y="643" text-anchor="middle">.ota-pending</text>
+  <text class="body" x="1004" y="669" text-anchor="middle">unconfirmed transaction</text>
+
+  <path class="line-blue" d="M397 508 V611"/>
+  <text class="small" x="408" y="553">stream</text>
+  <path class="line-gray" d="M669 654 H704"/>
+  <text class="small" x="686" y="637" text-anchor="middle">rename</text>
+  <path class="line-green" d="M470 678 C485 678 491 654 505 654"/>
+  <text class="small" x="488" y="706" text-anchor="middle">promote</text>
+  <path class="line-red line-dashed" d="M1004 611 V560 Q1004 540 984 540 H856"/>
+  <text class="small" x="925" y="532" text-anchor="middle">guards confirmation</text>
+
+  <rect x="306" y="719" width="799" height="32" rx="8" fill="#f2f6f9"/>
+  <text class="small" x="705" y="740" text-anchor="middle">Confirm removes .ota-pending + src.previous  •  Failure restores src.previous → src  •  Interrupted swaps recover on the next boot</text>
+
+  <!-- Host provisioning route -->
+  <path class="line-gray line-dashed" d="M218 603 H235 Q250 603 250 588 V185 Q250 167 268 167 H282"/>
+  <text class="small" x="229" y="585" transform="rotate(-90 229 585)">flash firmware + deploy bootstrap</text>
+
+  <!-- Footer legend -->
+  <path class="line-blue" d="M300 851 H342"/>
+  <text class="label" x="354" y="856">network / downloaded data</text>
+  <path class="line-green" d="M555 851 H597"/>
+  <text class="label" x="609" y="856">healthy application path</text>
+  <path class="line-red" d="M804 851 H846"/>
+  <text class="label" x="858" y="856">unconfirmed / recovery path</text>
+</svg>

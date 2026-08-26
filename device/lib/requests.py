@@ -67,23 +67,18 @@ def _ca_data_for_host(ca_certs, host):
   return ca_certs
 
 
-def _wrap_tls(sock, host, verify, ca_certs, ssl_context=None):
+def _wrap_tls(sock, host, ca_certs, ssl_context=None):
   tls, is_micropython_tls = _tls_module()
   context = ssl_context or tls.SSLContext(tls.PROTOCOL_TLS_CLIENT)
   ca_data = _ca_data_for_host(ca_certs, host)
-  if verify:
-    if ca_data:
-      if is_micropython_tls:
-        context.load_verify_locations(ca_data)
-      else:
-        context.load_verify_locations(cadata=ca_data)
-    elif is_micropython_tls:
-      raise ValueError('A CA certificate is required for verified TLS to %s' % host)
-    context.verify_mode = tls.CERT_REQUIRED
-  else:
-    if hasattr(context, 'check_hostname'):
-      context.check_hostname = False
-    context.verify_mode = tls.CERT_NONE
+  if ca_data:
+    if is_micropython_tls:
+      context.load_verify_locations(ca_data)
+    else:
+      context.load_verify_locations(cadata=ca_data)
+  elif is_micropython_tls:
+    raise ValueError('A CA certificate is required for verified TLS to %s' % host)
+  context.verify_mode = tls.CERT_REQUIRED
   return context.wrap_socket(sock, server_hostname=host)
 
 
@@ -105,64 +100,41 @@ def _redirect_url(url, location):
   return '%s/%s' % (url.rsplit('/', 1)[0], location)
 
 
-def request(
-  method,
+def get(
   url,
-  data=None,
-  json=None,
   headers=None,
   timeout=10,
-  logger=None,
-  verify=True,
+  log=None,
   ca_certs=None,
   ssl_context=None,
   max_redirects=3,
 ):
   headers = {} if headers is None else headers.copy()
-  log = (lambda *args, **kwargs: None)
-  if logger:
-    log = logger(append='request')
+  log = log or (lambda *parts: None)
 
   proto, _, host, path = _split_url(url)
-  if proto == 'http:':
-    port = 80
-  elif proto == 'https:':
-    port = 443
-  else:
-    raise ValueError('Unsupported protocol: ' + proto)
+  if proto != 'https:':
+    raise ValueError('Only verified HTTPS requests are supported')
   if ':' in host:
-    host, port = host.rsplit(':', 1)
-    port = int(port)
+    raise ValueError('Non-default HTTPS ports are not supported')
 
-  address = socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM)[0]
+  address = socket.getaddrinfo(host, 443, 0, socket.SOCK_STREAM)[0]
   sock = socket.socket(address[0], address[1], address[2])
   stream = None
   sock.settimeout(timeout)
   try:
-    log('%s %s %s' % (method, host, path), name='connect')
+    log('GET %s %s' % (host, path))
     sock.connect(address[-1])
-    if proto == 'https:':
-      sock = _wrap_tls(sock, host, verify, ca_certs, ssl_context=ssl_context)
+    sock = _wrap_tls(sock, host, ca_certs, ssl_context=ssl_context)
     stream = sock if hasattr(sock, 'readline') else sock.makefile('rwb', buffering=0)
 
-    request_method = method.encode() if isinstance(method, str) else method
     request_path = path.encode() if isinstance(path, str) else path
     host_header = host.encode() if isinstance(host, str) else host
-    stream.write(b'%s /%s HTTP/1.0\r\n' % (request_method, request_path))
+    stream.write(b'GET /%s HTTP/1.0\r\n' % request_path)
     if 'Host' not in headers:
       stream.write(b'Host: %s\r\n' % host_header)
     if 'User-Agent' not in headers:
-      stream.write(b'User-Agent: micropython-ota-updater/2\r\n')
-
-    if json is not None:
-      if data is not None:
-        raise ValueError('data and json cannot both be provided')
-      data = json_module.dumps(json)
-      headers.setdefault('Content-Type', 'application/json')
-    if isinstance(data, str):
-      data = data.encode()
-    if data:
-      headers.setdefault('Content-Length', str(len(data)))
+      stream.write(b'User-Agent: micropython-ota-updater/3\r\n')
 
     for key in headers:
       value = headers[key]
@@ -173,8 +145,6 @@ def request(
       stream.write(value)
       stream.write(b'\r\n')
     stream.write(b'Connection: close\r\n\r\n')
-    if data:
-      stream.write(data)
 
     status_line = stream.readline().split(None, 2)
     if len(status_line) < 2:
@@ -200,15 +170,13 @@ def request(
       stream = None
       if not location or max_redirects <= 0:
         raise ValueError('Redirect limit reached for %s' % url)
-      return request(
-        'GET' if status == 303 else method,
+      return get(
         _redirect_url(url, location),
-        data=None if status == 303 else data,
         headers=headers,
         timeout=timeout,
-        logger=logger,
-        verify=verify,
+        log=log,
         ca_certs=ca_certs,
+        ssl_context=ssl_context,
         max_redirects=max_redirects - 1,
       )
 
@@ -221,27 +189,3 @@ def request(
     if sock:
       sock.close()
     raise
-
-
-def head(url, **kwargs):
-  return request('HEAD', url, **kwargs)
-
-
-def get(url, **kwargs):
-  return request('GET', url, **kwargs)
-
-
-def post(url, **kwargs):
-  return request('POST', url, **kwargs)
-
-
-def put(url, **kwargs):
-  return request('PUT', url, **kwargs)
-
-
-def patch(url, **kwargs):
-  return request('PATCH', url, **kwargs)
-
-
-def delete(url, **kwargs):
-  return request('DELETE', url, **kwargs)

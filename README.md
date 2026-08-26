@@ -8,6 +8,8 @@ This project updates Python application files. Firmware upgrades are performed
 from a host with `make flash`; it does not rewrite the MicroPython firmware over
 the air.
 
+![MicroPython OTA Updater startup flow](docs/micropython-ota-updater-startup.svg)
+
 ## Supported platform
 
 | Board profile | MicroPython | Status |
@@ -45,16 +47,15 @@ make test-live-tls
 
 ## Configure a device
 
-Keep local credentials out of the tracked `src/env.py` file:
+Create the ignored local configuration from the one tracked schema:
 
 ```sh
-cp src/env.example.py src/env.local.py
+cp device/env.example.py device/env.local.py
 ```
 
-Edit `src/env.local.py`, then deploy it with `ENV_FILE=src/env.local.py`.
-A fine-grained GitHub token is optional for public repositories and should have
-read-only access to the application repository. Tokens are sent with Bearer
-authentication.
+Edit `device/env.local.py`, then deploy it. A fine-grained GitHub token is
+optional for public repositories and should have read-only access to the
+application repository. Tokens are sent with Bearer authentication.
 
 The bundled CA roots validate `api.github.com` and
 `raw.githubusercontent.com`. They intentionally reject unrecognised HTTPS
@@ -67,21 +68,21 @@ The commands use `esptool` and the officially supported `mpremote` utility.
 
 ```sh
 # Destructive: erases firmware and all files on the device.
-make erase RSHELL_PORT=/dev/cu.usbserial-0001
+make erase SERIAL_PORT=/dev/cu.usbserial-0001
 
 # Downloads the pinned artifact, verifies SHA-256, and flashes it.
-make flash RSHELL_PORT=/dev/cu.usbserial-0001
+make flash SERIAL_PORT=/dev/cu.usbserial-0001
 
 # Copies the updater and local configuration, then performs a soft reset.
-make deploy MPREMOTE_PORT=/dev/cu.usbserial-0001 ENV_FILE=src/env.local.py
+make deploy SERIAL_PORT=/dev/cu.usbserial-0001
 
-make repl MPREMOTE_PORT=/dev/cu.usbserial-0001
-make smoke-test MPREMOTE_PORT=/dev/cu.usbserial-0001
+make repl SERIAL_PORT=/dev/cu.usbserial-0001
+make smoke-test SERIAL_PORT=/dev/cu.usbserial-0001
 ```
 
 `make firmware` downloads without flashing, while `make verify-firmware`
-rechecks an existing image. `make image` and `make rsync` remain compatibility
-aliases for `make flash` and `make deploy`.
+rechecks an existing image. Board, artifact, chip, baud, and flash-address
+metadata are read exclusively from `firmware/manifest.json`.
 
 ## Application contract
 
@@ -89,12 +90,21 @@ The GitHub application repository must contain a `src` directory with a
 `main.py` module exposing `start`:
 
 ```python
-def start(env, requests, logger, time, updater):
+import machine
+import time
+
+
+def start(settings, updater):
+  # Optional: a reset before confirmation restores src.previous on next boot.
+  watchdog = machine.WDT(timeout=60000) if settings.get('watchdog') else None
+
   # Perform enough initialization to know this version can run, then confirm.
   updater.confirm()
 
   # Enter the application's normal loop.
   while True:
+    if watchdog:
+      watchdog.feed()
     time.sleep(1)
 ```
 
@@ -103,6 +113,18 @@ application remains in `src.previous` and `.ota-pending` marks the new version
 as unconfirmed. If the device resets first, the next boot restores the previous
 application. An exception raised while importing or starting the new
 application also triggers rollback and reset.
+
+HTTP, logging, and time are application concerns in version 3. Import the
+standard MicroPython modules the application needs instead of expecting the
+bootstrap to inject wrappers.
+
+## Rollout branches
+
+The updater already treats its configured GitHub branch head as the deployment
+checkpoint. A repository can use `ota-preview` and `ota-stable` branches for
+rollout rings without adding release-selection code to the device. Point test
+devices at `ota-preview`; after validation, fast-forward `ota-stable` to the
+tested commit. Devices store and compare the resolved commit SHA.
 
 ## Update sequence
 
@@ -145,3 +167,6 @@ Hardware workflow configuration:
 
 - Secrets: `OTA_WIFI_AP`, `OTA_WIFI_PASSWORD`, optionally `OTA_GITHUB_TOKEN`.
 - Variables: `OTA_GITHUB_REMOTE`, optionally `OTA_GITHUB_BRANCH`.
+
+Version 3 migration details, including removed interfaces and the known
+downstream consumer, are in `docs/UPGRADING.md`.

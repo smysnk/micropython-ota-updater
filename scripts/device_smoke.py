@@ -4,18 +4,21 @@ import os
 import sys
 
 import env
-from lib import certificates, logger, requests, update
+from lib import certificates, requests, update
 
 
-log = logger.config(enabled=False, include=[], exclude=[], time=None)
-io = update.IO(os=os, logger=log)
+def no_log(*parts):
+  return None
+
+
+io = update.IO(os=os, log=no_log)
 github = update.GitHub(
   requests=requests,
   remote=env.settings['githubRemote'],
   branch=env.settings.get('githubRemoteBranch', 'main'),
   token=env.settings.get('githubToken', ''),
   io=io,
-  logger=log,
+  log=no_log,
   ca_certs=certificates.for_host,
   timeout=env.settings.get('httpTimeout', 10),
 )
@@ -29,7 +32,7 @@ smoke = update.OTAUpdater(
   minimumFreeBytes=0,
   io=io,
   github=github,
-  logger=log,
+  log=no_log,
 )
 io.rmtree('.smoke-current')
 io.rmtree('.smoke-next')

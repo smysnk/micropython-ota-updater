@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="850" viewBox="0 0 1200 850" role="img" aria-labelledby="title desc">
+  <title id="title">MicroPython OTA updater logical moving parts — layered stack</title>
+  <desc id="desc">Five horizontal architecture layers flow downward from external inputs to application outcome.</desc>
+  <defs>
+    <linearGradient id="head" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#153b6b"/><stop offset=".55" stop-color="#126d95"/><stop offset="1" stop-color="#16816f"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#183d58" flood-opacity=".12"/></filter>
+    <marker id="down" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#1680b8"/></marker>
+    <marker id="right" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#7890a3"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif}.title{fill:#fff;font-size:34px;font-weight:700}.subtitle{fill:#dcf3fb;font-size:15px}.layer-title{fill:#fff;font-size:17px;font-weight:700}.card-title{fill:#083d73;font-size:16px;font-weight:700}.body{fill:#365c76;font-size:12px}.small{fill:#5d7689;font-size:11px}.down{fill:none;stroke:#1680b8;stroke-width:4;stroke-linecap:round;marker-end:url(#down)}.right{fill:none;stroke:#7890a3;stroke-width:3;stroke-linecap:round;marker-end:url(#right)}
+    </style>
+  </defs>
+  <rect width="1200" height="850" fill="#f7fafc"/>
+  <rect x="24" y="18" width="1152" height="88" rx="20" fill="url(#head)" filter="url(#shadow)"/>
+  <text class="title" x="600" y="58" text-anchor="middle">Layered Architecture</text>
+  <text class="subtitle" x="600" y="83" text-anchor="middle">Dependencies move downward; details remain ordered within each layer</text>
+
+  <!-- Layer 1 -->
+  <rect x="72" y="136" width="1056" height="112" rx="16" fill="#fff" stroke="#9fb8ca" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="72" y="136" width="172" height="112" rx="16" fill="#26394d"/><rect x="222" y="136" width="22" height="112" fill="#26394d"/>
+  <text class="layer-title" x="158" y="183" text-anchor="middle">1 • Inputs</text><text x="158" y="207" text-anchor="middle" fill="#dcebf5" font-size="12">outside the device</text>
+  <rect x="276" y="158" width="238" height="68" rx="11" fill="#eef5fa" stroke="#a8bfd0"/>
+  <text class="card-title" x="395" y="185" text-anchor="middle">GitHub repository</text><text class="body" x="395" y="207" text-anchor="middle">branch SHA • src tree • raw files</text>
+  <rect x="546" y="158" width="238" height="68" rx="11" fill="#e8f5fc" stroke="#74b8dc"/>
+  <text class="card-title" x="665" y="185" text-anchor="middle">env.py</text><text class="body" x="665" y="207" text-anchor="middle">remote • credentials • limits</text>
+  <rect x="816" y="158" width="278" height="68" rx="11" fill="#fff3cc" stroke="#dba000"/>
+  <text class="card-title" x="955" y="185" text-anchor="middle">Host + CI</text><text class="body" x="955" y="207" text-anchor="middle">firmware • deploy • compatibility proof</text>
+  <path class="down" d="M600 248V274"/>
+
+  <!-- Layer 2 -->
+  <rect x="72" y="276" width="1056" height="112" rx="16" fill="#fff" stroke="#68b9d4" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="72" y="276" width="172" height="112" rx="16" fill="#087bb6"/><rect x="222" y="276" width="22" height="112" fill="#087bb6"/>
+  <text class="layer-title" x="158" y="323" text-anchor="middle">2 • Startup</text><text x="158" y="347" text-anchor="middle" fill="#e1f5ff" font-size="12">trusted bootstrap</text>
+  <rect x="276" y="298" width="218" height="68" rx="11" fill="#e8f6fd" stroke="#1680b8"/>
+  <text class="card-title" x="385" y="325" text-anchor="middle">boot.py</text><text class="body" x="385" y="347" text-anchor="middle">Wi-Fi + valid RTC</text>
+  <path class="right" d="M494 332H530"/>
+  <rect x="532" y="298" width="218" height="68" rx="11" fill="#e8f6fd" stroke="#1680b8"/>
+  <text class="card-title" x="641" y="325" text-anchor="middle">main.py</text><text class="body" x="641" y="347" text-anchor="middle">construct collaborators</text>
+  <path class="right" d="M750 332H786"/>
+  <rect x="788" y="298" width="306" height="68" rx="11" fill="#073b70"/>
+  <text x="941" y="325" text-anchor="middle" fill="#fff" font-size="16" font-weight="700">Trust gate</text><text x="941" y="347" text-anchor="middle" fill="#dcefff" font-size="12">time • verified TLS • pinned CA roots</text>
+  <path class="down" d="M600 388V414"/>
+
+  <!-- Layer 3 -->
+  <rect x="72" y="416" width="1056" height="112" rx="16" fill="#fff" stroke="#478eb6" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="72" y="416" width="172" height="112" rx="16" fill="#07518c"/><rect x="222" y="416" width="22" height="112" fill="#07518c"/>
+  <text class="layer-title" x="158" y="463" text-anchor="middle">3 • Service</text><text x="158" y="487" text-anchor="middle" fill="#dcefff" font-size="12">update control</text>
+  <rect x="276" y="438" width="218" height="68" rx="11" fill="#e8f6fd" stroke="#1680b8"/>
+  <text class="card-title" x="385" y="465" text-anchor="middle">GitHub adapter</text><text class="body" x="385" y="487" text-anchor="middle">compare + stream</text>
+  <path class="right" d="M494 472H530"/>
+  <rect x="532" y="438" width="306" height="68" rx="11" fill="#07518c"/>
+  <text x="685" y="465" text-anchor="middle" fill="#fff" font-size="16" font-weight="700">OTAUpdater</text><text x="685" y="487" text-anchor="middle" fill="#dcefff" font-size="12">recover • stage • swap • confirm</text>
+  <path class="right" d="M838 472H874"/>
+  <rect x="876" y="438" width="218" height="68" rx="11" fill="#eef5fa" stroke="#8daabb"/>
+  <text class="card-title" x="985" y="465" text-anchor="middle">IO adapter</text><text class="body" x="985" y="487" text-anchor="middle">portable filesystem ops</text>
+  <path class="down" d="M600 528V554"/>
+
+  <!-- Layer 4 -->
+  <rect x="72" y="556" width="1056" height="112" rx="16" fill="#fff" stroke="#66b891" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="72" y="556" width="172" height="112" rx="16" fill="#0a8d60"/><rect x="222" y="556" width="22" height="112" fill="#0a8d60"/>
+  <text class="layer-title" x="158" y="603" text-anchor="middle">4 • State</text><text x="158" y="627" text-anchor="middle" fill="#e0f8ed" font-size="12">transactional files</text>
+  <rect x="276" y="578" width="178" height="68" rx="11" fill="#fff1be" stroke="#df9800"/>
+  <text class="card-title" x="365" y="606" text-anchor="middle">src.next</text><text class="body" x="365" y="628" text-anchor="middle">staged</text>
+  <path class="right" d="M454 612H482"/>
+  <rect x="484" y="578" width="178" height="68" rx="11" fill="#ffe1e6" stroke="#e31837"/>
+  <text class="card-title" x="573" y="606" text-anchor="middle">.ota-pending</text><text class="body" x="573" y="628" text-anchor="middle">unconfirmed</text>
+  <path class="right" d="M662 612H690"/>
+  <rect x="692" y="578" width="178" height="68" rx="11" fill="#dceefa" stroke="#1680b8"/>
+  <text class="card-title" x="781" y="606" text-anchor="middle">src.previous</text><text class="body" x="781" y="628" text-anchor="middle">rollback copy</text>
+  <path class="right" d="M870 612H898"/>
+  <rect x="900" y="578" width="194" height="68" rx="11" fill="#d9f4e1" stroke="#0b9a45"/>
+  <text class="card-title" x="997" y="606" text-anchor="middle">src</text><text class="body" x="997" y="628" text-anchor="middle">active candidate</text>
+  <path class="down" d="M600 668V694"/>
+
+  <!-- Layer 5 -->
+  <rect x="72" y="696" width="1056" height="112" rx="16" fill="#fff" stroke="#70bc7e" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="72" y="696" width="172" height="112" rx="16" fill="#0b9a45"/><rect x="222" y="696" width="22" height="112" fill="#0b9a45"/>
+  <text class="layer-title" x="158" y="743" text-anchor="middle">5 • Outcome</text><text x="158" y="767" text-anchor="middle" fill="#e0f8e8" font-size="12">application contract</text>
+  <rect x="276" y="718" width="250" height="68" rx="11" fill="#eef8f1" stroke="#68b77f"/>
+  <text class="card-title" x="401" y="746" text-anchor="middle">src.main.start(...)</text><text class="body" x="401" y="768" text-anchor="middle">run candidate application</text>
+  <path class="right" d="M526 752H562"/>
+  <rect x="564" y="718" width="250" height="68" rx="11" fill="#d9f4e1" stroke="#0b9a45"/>
+  <text x="689" y="746" text-anchor="middle" fill="#087237" font-size="16" font-weight="700">Healthy → confirm</text><text class="body" x="689" y="768" text-anchor="middle">remove marker + backup</text>
+  <rect x="844" y="718" width="250" height="68" rx="11" fill="#ffe1e6" stroke="#e31837"/>
+  <text x="969" y="746" text-anchor="middle" fill="#b3132b" font-size="16" font-weight="700">Failure → rollback</text><text class="body" x="969" y="768" text-anchor="middle">restore backup + reset</text>
+</svg>
