@@ -25,6 +25,82 @@ The firmware URL and SHA-256 checksum are pinned in
 firmware filename, flash address, checksum, and hardware validation before they
 are described as supported.
 
+## Quick start
+
+This path installs the updater on one `ESP32_GENERIC` board and starts a minimal
+application from GitHub.
+
+### 1. Create the application repository
+
+Open the
+[`micropython-ota-quickstart` template](https://github.com/smysnk/micropython-ota-quickstart/generate),
+choose **Create a new repository**, and create a public repository. The template
+already contains the required `src/main.py` and `start(settings, updater)`
+entrypoint.
+
+### 2. Install the host tools
+
+```sh
+git clone https://github.com/smysnk/micropython-ota-updater.git
+cd micropython-ota-updater
+
+python3 -m venv .venv
+. .venv/bin/activate
+make install
+```
+
+### 3. Configure the device
+
+```sh
+cp device/env.example.py device/env.local.py
+```
+
+Change these four values in `device/env.local.py`:
+
+```python
+'wifiAP': 'YOUR_WIFI_NAME',
+'wifiPassword': 'YOUR_WIFI_PASSWORD',
+'githubRemote': 'https://github.com/YOUR_NAME/YOUR_APPLICATION',
+'githubRemoteBranch': 'main',
+```
+
+### 4. Flash and deploy
+
+Connect one ESP32 over USB and confirm that `mpremote` can see it:
+
+```sh
+python -m mpremote devs
+```
+
+> **Warning:** `erase` removes the existing firmware and every file on the
+> selected device.
+
+With one compatible board connected, automatic port detection is usually
+enough:
+
+```sh
+make erase flash deploy SERIAL_PORT=auto
+make repl SERIAL_PORT=auto
+```
+
+The REPL should begin printing:
+
+```text
+ota-controller: OTA application started
+ota-controller: heartbeat 1
+ota-controller: heartbeat 2
+```
+
+### 5. Publish an update
+
+Edit `src/main.py` in the application repository created from the template,
+commit it, and push it to GitHub. Press the board's reset button or enter
+`Ctrl-D` in the REPL. The updater will install the new branch commit and retain
+the previous application until the new version calls `updater.confirm()`.
+
+The sections below cover development, private repositories, explicit serial
+ports, rollout branches, recovery, and validation in more detail.
+
 ## Development
 
 ```sh
