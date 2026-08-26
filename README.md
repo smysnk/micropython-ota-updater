@@ -83,8 +83,8 @@ commit it, and push it to GitHub. Press the board's reset button or enter
 `Ctrl-D` in the REPL. The updater will install the new branch commit and retain
 the previous application until the new version calls `updater.confirm()`.
 
-The sections below cover the application contract, rollout branches, recovery,
-and validation in more detail.
+The sections below cover the application contract, rollout branches, and
+recovery in more detail.
 
 ## Application contract
 
@@ -157,22 +157,6 @@ mpremote connect /dev/cu.usbserial-0001 fs cat :.ota-pending
 Do not remove `src.previous` while `.ota-pending` exists. Full recovery steps
 and the migration notes from the earlier release are in `docs/UPGRADING.md`.
 
-## CI and hardware validation
-
-Normal CI runs CPython tests and compiles with the stable MicroPython compiler.
-A scheduled/manual job compiles against MicroPython's development branch and is
-non-blocking. The `ESP32 hardware smoke test` workflow is manual and requires a
-self-hosted runner labelled `micropython-esp32`; it erases and flashes the
-attached board, deploys the updater, verifies GitHub TLS, and tests a reboot.
-
-Hardware workflow configuration:
-
-- Secrets: `OTA_WIFI_AP`, `OTA_WIFI_PASSWORD`, optionally `OTA_GITHUB_TOKEN`.
-- Variables: `OTA_GITHUB_REMOTE`, optionally `OTA_GITHUB_BRANCH`.
-
-Version 3 migration details, including removed interfaces and the known
-downstream consumer, are in `docs/UPGRADING.md`.
-
 ## Supported platform
 
 | Board profile | MicroPython | Status |
@@ -187,4 +171,5 @@ The firmware URL and SHA-256 checksum are pinned in `manifest.json`. Other ESP32
 variants must be added with their own firmware filename, flash address,
 checksum, and hardware validation before they are described as supported.
 
-Contributing or changing the updater? See the [development guide](docs/DEVELOPMENT.md).
+Project guides: [Development](docs/DEVELOPMENT.md) ·
+[CI and hardware validation](docs/CI_AND_HARDWARE_VALIDATION.md)
