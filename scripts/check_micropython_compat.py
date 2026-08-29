@@ -19,6 +19,7 @@ def main():
     compiler = str(adjacent) if adjacent.exists() else 'mpy-cross'
   requested_sources = args.source or [
     'device',
+    'scripts/check_ota_state.py',
     'scripts/device_smoke.py',
     'scripts/micropython_unix_smoke.py',
   ]
