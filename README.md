@@ -44,13 +44,14 @@ make install
 cp device/env.example.py device/env.local.py
 ```
 
-First set the Wi-Fi credentials and application repository in
-`device/env.local.py`:
+Before deploying, replace both Wi-Fi placeholders in `device/env.local.py`.
+The example already points to the public quickstart application; replace
+`githubRemote` when you are ready to deploy your own repository:
 
 ```python
 'wifiAP': 'YOUR_WIFI_NAME',
 'wifiPassword': 'YOUR_WIFI_PASSWORD',
-'githubRemote': 'https://github.com/YOUR_NAME/YOUR_APPLICATION',
+'githubRemote': 'https://github.com/smysnk/micropython-ota-quickstart',
 ```
 
 Then choose one update mode.
@@ -76,30 +77,48 @@ assets are not downloaded.
 
 ### 4. Flash and deploy
 
-Connect one ESP32 over USB and confirm that `mpremote` can see it:
+Connect one ESP32 over USB and confirm that `mpremote` lists a USB serial
+device:
 
 ```sh
 python -m mpremote devs
 ```
 
+On macOS, the device normally looks like `/dev/cu.usbserial-*` or
+`/dev/cu.SLAB_USBtoUART`. Do not continue if the list only contains Bluetooth
+or debug-console ports.
+
 > **Warning:** `erase` removes the existing firmware and every file on the
 > selected device.
 
-With one compatible board connected, automatic port detection is usually
-enough:
+Erase the board and install MicroPython:
 
 ```sh
-make erase flash deploy
+make erase flash
+```
+
+Then copy the updater and your local configuration to the board:
+
+```sh
+make deploy
 make repl
 ```
 
-The REPL should begin printing:
+After the REPL connects, press `Ctrl-D` to restart the device and see the
+complete boot sequence. On its first boot, the updater connects to Wi-Fi and
+downloads the quickstart application's `src/` directory from GitHub, so the
+first startup can take a little longer. It should finish by printing:
 
 ```text
 ota-controller: OTA application started
 ota-controller: heartbeat 1
 ota-controller: heartbeat 2
 ```
+
+> **Tip:** The commands automatically select the connected board. If more than
+> one compatible serial device is connected, specify one with, for example,
+> `SERIAL_PORT=/dev/cu.usbserial-0001 make deploy`. Run `make help` for the
+> other commands that accept this setting.
 
 ### 5. Publish an update
 

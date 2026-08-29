@@ -39,7 +39,9 @@ def test_github_provider_receives_configured_update_mode():
 
   assert len(calls) == 1
   assert 'mode' in [keyword.arg for keyword in calls[0].keywords]
-  assert "'githubUpdateMode': 'branch'" in Path('device/env.example.py').read_text()
+  example = Path('device/env.example.py').read_text()
+  assert "'githubRemote': 'https://github.com/smysnk/micropython-ota-quickstart'" in example
+  assert "'githubUpdateMode': 'branch'" in example
   assert "env.settings.get('githubUpdateMode', 'branch')" in Path(
     'scripts/device_smoke.py'
   ).read_text()

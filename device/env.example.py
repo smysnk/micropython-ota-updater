@@ -5,7 +5,7 @@ settings = {
   'wifiConnectTimeout': 30,
   'debug': False,
   'httpTimeout': 10,
-  'githubRemote': 'https://github.com/OWNER/APPLICATION_REPOSITORY',
+  'githubRemote': 'https://github.com/smysnk/micropython-ota-quickstart',
   'githubUpdateMode': 'branch',
   'githubRemoteBranch': 'main',
   'githubToken': '',
