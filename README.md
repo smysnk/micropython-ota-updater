@@ -1,6 +1,6 @@
 # MicroPython OTA Updater
 
-https://github.com/user-attachments/assets/cb7ecd33-a612-427e-8a44-b2f6892c403f
+https://github.com/user-attachments/assets/9ddcae3f-b544-4854-a867-c9ce3dd92f7a
 
 An application-file updater for MicroPython devices. It follows a configured
 GitHub branch or the latest published GitHub Release, downloads a changed `src`
